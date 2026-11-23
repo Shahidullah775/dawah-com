@@ -1,30 +1,47 @@
-# Dawah.com Facebook automation
+# Dawah.com Facebook Automation — Implementation Status
 
-## Facebook Page connection
-- Page name: Dawah.com
-- Page ID: 1474802262379886
-- Public Page URL supplied by the owner: https://www.facebook.com/share/1FSMx7HFkb/
-- Make Facebook Pages connection was authorized on 2026-11-24.
-- Granted permissions include pages_manage_posts, pages_manage_engagement, pages_manage_metadata, pages_read_engagement, pages_read_user_content, pages_show_list, and business_management.
-- A read-only Page info check succeeded: page name Dawah.com, can_post=true, is_published=true.
-- The one-off verification scenario was deactivated after the successful check.
+Last verified: 2026-11-24
 
-## Current status
-Facebook authentication and Page-level posting permission are verified. This does NOT yet mean scheduled publishing is live.
+## Confirmed working
+- Facebook Page: Dawah.com (Page ID: 1474802262379886).
+- Authorized Make Facebook Pages connection is healthy.
+- Page info check confirms can_post=true and is_published=true.
+- Test post exists: 1474802262379886_122095983891564645.
+- Comment successfully created on that post: 122095983891564645_1642715614007170.
+- Make scenario 8764810 ("Dawah.com – Approved Test Post and Comment") is on-demand only; it is a test, not the production scheduler.
 
-## Remaining implementation before enabling publishing
-1. Implement a server-side publisher/worker that obtains the next approved Quran/Hadith item from the database.
-2. Generate or retrieve the approved photo card and assemble the caption and first/second comments.
-3. Publish the Page post, then add the commentary comments only after the post ID is returned.
-4. Confirm publication with the real Facebook post ID using the database confirmation routine; advance the sequence only after confirmation.
-5. Add retry/idempotency protection, failure logging, pause/resume and schedule execution for Asia/Dhaka.
-6. Store all credentials only in secure server-side secrets. Never commit access tokens or service-role keys.
-7. Test with an explicitly approved test post before enabling recurring publication.
+## Current safety state
+- Supabase private.dawah_settings: publishing_mode=auto, timezone=Asia/Dhaka, automation_enabled=false.
+- Production content queue currently has no verified seed records (must be populated and reviewed before launch).
+- autopost_slots are enabled in the database, but they do not schedule or publish on their own.
+- pg_cron and pg_net are not enabled in the Supabase project.
+- Do not turn on automation until the scheduled worker, secure server-side Facebook credential path, verified content, comments, sequence confirmation and failure recovery are implemented and tested.
 
 ## Intended daily schedule (Asia/Dhaka)
-- Quran stream: 05:45, 16:45, 20:45
-- Sahih al-Bukhari: 09:00
-- Sahih Muslim: 13:45
-- Jami at-Tirmidhi: 18:15
+- Quran shared stream: 05:45, 16:45, 20:45.
+- Sahih al-Bukhari: 09:00.
+- Sahih Muslim: 13:45.
+- Jami at-Tirmidhi: 18:15.
 
-Publishing remains disabled until the end-to-end workflow is tested and explicitly enabled by the owner.
+## Required implementation before launch
+1. Configure a secure server-side Facebook Page credential for the publisher. Never put tokens in browser code, Git, logs or chat.
+2. Implement an authenticated scheduled worker that reads only reviewed/approved content for the exact next sequence.
+3. Publish the Page post, then publish the planned tafsir/sharh and source-link comments.
+4. Call public.dawah_confirm_publish only after the post and required comments succeed; never fabricate a Facebook post ID.
+5. Add idempotency, retry/backoff, run locking, error logging and pause/resume checks.
+6. Seed verified Quran and hadith source records with provenance and permitted translation/commentary use.
+7. Run a controlled end-to-end test, verify the sequence advances only after full success, then explicitly enable automation.
+
+## Editorial rules
+- Never invent Quran text, hadith text, translations, references, tafsir or attribution.
+- Quran caption: full Arabic verse and full Bengali translation with surah/ayah reference.
+- Quran comments: Tafsir Ibn Kathir and Tafhim-ul-Quran explanations/authorized excerpts, plus two source links; other reputable tafsir links may be added occasionally.
+- Hadith caption: full Arabic and Bengali translation with collection/reference.
+- Hadith comments: two reliable sharh/explanation comments and two source links.
+- Respect copyright/licensing; do not reproduce long copyrighted translations/commentaries without permission.
+- Photo-card work is deferred. Keep the approved minimal white editorial style and subject-relevant imagery when resumed.
+
+## Current database findings
+- Queue columns include content_type, source_name, sequence_no, arabic_text, bengali_translation, commentary, reference_text, card_text, status, scheduled_at, published_at, external_post_id and error_message.
+- Current schedule slots are enabled: Quran 05:45,16:45,20:45; Bukhari 09:00; Muslim 13:45; Tirmidhi 18:15.
+- The confirmation RPC public.dawah_confirm_publish exists and must only be called with a genuine Facebook post ID after successful publication.
