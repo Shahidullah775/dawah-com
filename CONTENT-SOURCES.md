@@ -103,3 +103,16 @@ No placeholder, guessed, or AI-invented Quran/Hadith content may enter the produ
 - First live collection verified: Surah Al-Fatiha, 7/7 ayat, pending review; next sura is 2.
 - Collection stops after sura 114. This is collection only: it does not approve or publish content and does not enable Facebook autopost.
 - QuranEnc API list endpoint currently returned only its first Bengali translation item in the runtime test, so the collector uses the pinned, previously verified `bengali_zakaria` key and version 1.1.1. A change to the source edition requires a deliberate review/update rather than silently switching translations.
+
+
+## Automated hadith Arabic collection status (2026-11-24)
+
+- Supabase Cron job: `dawah-hadith-arabic-collector-15m`, scheduled every 15 minutes.
+- Edge Function: `dawah-hadith-arabic-collector`, active; each run independently claims the next source number for Bukhari, Muslim, and Tirmidhi, then stages the exact Arabic record.
+- Initial source API `sahih-al-bukhari.com/api/v1` returned HTTP 503 with `api_paused` during the live test. The importer therefore uses the repository's per-record JSON files at a pinned Git commit rather than silently switching to an unpinned branch.
+- Pinned repository commit: `df57907be35291c91ad6a6691180e22ca9920784`; editions: `ara-bukhari`, `ara-muslim`, and `ara-tirmidhi`. Each record retains its raw GitHub source URL, blob URL, repository commit, dataset numbering and exact Arabic text.
+- Initial live test succeeded: Bukhari hadith-api no. 1 (edition no. 1), Muslim hadith-api no. 93 (edition no. 8.01), and Tirmidhi hadith-api no. 1 (edition no. 1). Muslim records 1–92 in this pinned Arabic edition have empty text; the cursor starts at 93 to avoid creating empty placeholders.
+- The repository contains an Unlicense file, but the dataset's individual text provenance and redistribution rights have not been independently confirmed. Every staged row is explicitly marked for rights review and scholar review; this is not cleared for publication.
+- Bengali translation fields remain null. No AI translation, generated commentary, queue insertion, approval, public publication, or Facebook post is performed by this collector.
+- Idempotency: unique collection/source-number/pinned-version constraint. Failed requests retry the same source number; empty Arabic records are logged and skipped; a 404 at the end of a stream marks that collection complete.
+- Admin dashboard now includes a separate hadith staging list and cursor status; the Quran and hadith staging tables remain isolated from the publishing queue.
