@@ -85,3 +85,11 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Verified the updated private claim function retains its existing SECURITY DEFINER + empty search_path + service_role guard. anon and authenticated cannot execute it; service_role can.
 - The database migration is version-controlled in `supabase/migrations/20261123221750_return_all_recorded_comment_ids_from_worker_claim.sql`.
 - This improves the recovery data contract; the full Make publisher flow and end-to-end retry test are still pending.
+
+
+## Admin content editor update — 2026-11-24
+- Added separate Admin Panel inputs for Tafhim-ul-Quran, Tafsir Ibn Kathir, two additional editorial/source notes, external tafsir URLs, Bengali translation provenance, and Arabic text source/version.
+- Queue create/update now persists these fields to their matching private queue columns; the dashboard RPC returns them so editors can reopen and revise the full record.
+- Database migration: `20261123222832_dawah_admin_content_sources_fields` (applied and verified).
+- This closes a data-entry gap: the previous form only saved the generic commentary field and silently omitted the dedicated tafsir/source fields needed by the planned comment workflow.
+- No production content was inserted. Queue count remains zero, and automation remains disabled.
