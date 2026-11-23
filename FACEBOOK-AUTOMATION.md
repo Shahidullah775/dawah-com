@@ -3,67 +3,73 @@
 Last verified: 2026-11-24
 
 ## Confirmed working
-- Facebook Page: Dawah.com (Page ID: 1474802262379886).
-- Authorized Make Facebook Pages connection is healthy.
-- Page info check confirms can_post=true and is_published=true.
-- Test post exists: 1474802262379886_122095983891564645.
-- Comment successfully created on that post: 122095983891564645_1642715614007170.
-- Make scenario 8764810 ("Dawah.com – Approved Test Post and Comment") is on-demand only; it is a test, not the production scheduler.
-- Supabase Edge Function `dawah-autopost-worker` is deployed (version 2), with `verify_jwt=false` and mandatory custom header authentication.
-- GitHub contains the worker source and migration 004.
+- Facebook Page: Dawah.com (Page ID: 1474802262379886); published and can_post=true.
+- Make Facebook Pages connection is healthy (connection 13348261).
+- A controlled test post and comment were created successfully; test post ID: 1474802262379886_122095983891564645.
+- Worker API test through Make returned HTTP 200 and `{"status":"paused"}`, confirming the authenticated request reached the worker while automation was disabled.
+- Supabase Edge Function `dawah-autopost-worker` is ACTIVE, version 3, verify_jwt=false, protected by the `x-dawah-worker-secret` header.
+- Make worker verification scenario 8765326 is active and on-demand. Facebook test scenarios 8764810, 8764707 and 8764674 are inactive. Existing unrelated Make scenario 8543045 remains active and was not changed.
+- GitHub repository: https://github.com/Shahidullah775/dawah-com
 
-## Current safety state
-- Supabase private.dawah_settings: publishing_mode=auto, timezone=Asia/Dhaka, automation_enabled=false.
-- Production content queue currently has no verified seed records (must be populated and reviewed before launch).
-- autopost_slots are enabled in the database, but they do not schedule or publish on their own.
-- pg_cron and pg_net are not enabled in the Supabase project.
-- Worker currently fails closed until the owner configures `DAWAH_WORKER_SECRET` (minimum 32 characters) in Supabase Edge Function Secrets and stores the same value in a secure Make HTTP API-key connection/header. Do not send the secret through chat or commit it.
-- Make HTTP API-key connection authorization request is pending; it is for the custom `x-dawah-worker-secret` header.
-- Do not turn on automation until the scheduled orchestration, secure server-side Facebook credential path, verified content, comments, sequence confirmation and failure recovery are implemented and tested.
-- Queue currently contains 0 records; no real Quran/Hadith content has been inserted.
+## Safety state — do not enable live publishing yet
+- Supabase `private.dawah_settings`: publishing_mode=auto, timezone=Asia/Dhaka, automation_enabled=false.
+- Production content queue: 0 records. Published content: 0 records.
+- Four DB slots are enabled: quran_stream, bukhari, dhuhr_muslim, tirmidhi.
+- `pg_cron` and `pg_net` are not currently installed/enabled; only `supabase_vault` was found among the checked extensions.
+- Do not enable automation or create live posts until the five-comment Quran workflow, source-verified content, complete scheduler, retry/idempotency and end-to-end verification are implemented.
+- Never share or commit the worker secret or Supabase service-role key. The worker secret is stored in Supabase Edge Function Secrets and the matching Make API-key connection was approved by the owner.
 
-## Intended daily schedule (Asia/Dhaka)
-- Quran shared stream: 05:45, 16:45, 20:45.
+## Daily schedule (Asia/Dhaka)
+- Quran shared sequential stream: 05:45, 16:45, 20:45.
 - Sahih al-Bukhari: 09:00.
 - Sahih Muslim: 13:45.
 - Jami at-Tirmidhi: 18:15.
 
-## Worker API
+## Quran publishing specification — owner-approved
+- The Quran sequence begins at Surah Al-Fatiha 1:1 and proceeds continuously, verse by verse, across the three daily Quran slots.
+- The sequence advances only after the Facebook post and every required comment are successfully created, their actual Facebook IDs are recorded, and the database confirmation succeeds.
+- Photo card (when card work resumes): Arabic ayah plus a concise, accurate Bengali tafsir/core message; keep the design readable and uncluttered.
+- Main caption: Arabic ayah and surah/ayah reference. Include Bengali translation in the caption if it is short enough; otherwise place it in a comment.
+- Required Quran comments, each as a separate Facebook comment:
+  1. London Academy Bengali Quran translation.
+  2. Tafhim-ul-Quran explanation.
+  3. Tafsir Ibn Kathir explanation.
+  4. A link to another reliable tafsir/source.
+  5. A second separate link to another reliable tafsir/source.
+- Do not invent Arabic, translation, tafsir, source attribution or URLs. Verify the source text and reference before queueing.
+- Copyright: do not reproduce long protected Bengali translations or tafsir passages verbatim without permission or an open licence. Use permitted short excerpts and accurate summaries with links unless reuse rights are verified. Do not label a summary as a verbatim quotation.
+
+## Hadith publishing specification
+- Separate sequential streams for Sahih al-Bukhari, Sahih Muslim and Jami at-Tirmidhi at their respective schedule times.
+- Caption: verified Arabic hadith text, Bengali translation, collection and exact reference.
+- Comments and commentary must be source-verified and rights-cleared. Do not invent narrations, numbering or source links.
+
+## Worker API (current deployed contract)
 Endpoint: `https://hcanzohgtnzhchjnwfdw.supabase.co/functions/v1/dawah-autopost-worker`
+Every request is POST JSON and must include `x-dawah-worker-secret`.
+- `claim`: accepts slot_id quran_stream, bukhari, dhuhr_muslim or tirmidhi.
+- `record_post`: records the real Facebook post ID against queue_id and claim_token.
+- `record_comment`: currently accepts comment_number 1 or 2 only.
+- `confirm`: currently confirms only after both recorded comment IDs exist.
+- `release`: releases a failed claim with an error message.
+The current worker/database confirmation path supports only two comments. It must be extended to record and require all five Quran comments before the Quran workflow can be considered implemented. Do not work around this by merging comments or skipping items.
 
-Every request must be POST JSON and include `x-dawah-worker-secret`. Supported operations:
-- `{"op":"claim","slot_id":"quran_stream"}` (also `bukhari`, `dhuhr_muslim`, `tirmidhi`). Claim RPC only returns an item when automation is enabled and the exact Asia/Dhaka slot time matches.
-- `{"op":"record_post","queue_id":"...","claim_token":"...","facebook_post_id":"..."}`
-- `{"op":"record_comment","queue_id":"...","claim_token":"...","comment_number":1,"facebook_comment_id":"..."}` (comment_number 1 or 2)
-- `{"op":"confirm","queue_id":"...","slot_id":"...","facebook_post_id":"..."}` (only succeeds after both comment IDs are recorded)
-- `{"op":"release","queue_id":"...","claim_token":"...","error_message":"..."}`
+## Verified current database structure
+- `private.dawah_content_queue` has Arabic text, Bengali translation, tafsir_ibn_kathir, tafhimul_quran, explanation fields, source_links, translation_source, arabic_source, two external comment ID fields, claim token/timestamp and retry counters.
+- Public wrappers `dawah_worker_claim`, `dawah_worker_record_post`, `dawah_worker_record_comment`, `dawah_worker_release` exist and are restricted to service_role. The confirmation function is service_role-only and SECURITY INVOKER; do not change it to SECURITY DEFINER.
+- Admin API currently validates exactly four schedule slots and the worker has four allowed slot IDs. The public schedule remains six daily posting times because the Quran slot carries three times.
+- RLS is enabled on operational tables. Keep private queue and staff tables inaccessible to anon/authenticated; do not loosen policies to make the worker work.
 
-The Worker uses the server-side Supabase service-role key from the Edge Function environment; no service-role credential is exposed to Make or the browser. It calls narrow, public-schema RPC wrappers that are SECURITY INVOKER and executable only by service_role. The underlying queue tables and private schema remain unexposed. The Worker rejects requests until `DAWAH_WORKER_SECRET` is set. Never put the secret in source control or chat.
+## Remaining implementation
+1. Extend queue comment-ID storage and database RPCs/confirmation logic to support all five Quran comments, with appropriate per-stream requirements for hadith.
+2. Update worker API to record each required comment idempotently and confirm only after all required comments succeed.
+3. Update admin API/dashboard schedule and content validation only where needed; preserve the four logical stream IDs and six daily times.
+4. Implement the scheduled orchestrator and failure/retry/idempotency behavior; use the existing Make Facebook connection and secure worker connection.
+5. Install/configure supported scheduling extensions and securely store any invocation credentials; verify current Supabase Cron guidance before scheduling.
+6. Verify Quran and hadith source texts, exact references, translation source and copyright/reuse permissions before seeding records.
+7. Run an end-to-end test without publishing to the public Page where possible; then perform a specifically approved controlled test. Keep `automation_enabled=false` until the owner explicitly authorizes launch.
 
-## Required implementation before launch
-1. In Supabase Dashboard > Edge Functions > Secrets, add `DAWAH_WORKER_SECRET` with a password-manager-generated random value of at least 32 characters. Do not paste it in ChatGPT.
-2. Open the pending Make HTTP authorization request and create an API-key connection that sends the key in a request header named `x-dawah-worker-secret`; use the exact same value. Do not put it in plain scenario fields.
-3. Build and activate the scheduled Make orchestration for the six daily times, using the existing Facebook Pages connection 13348261.
-4. Publish the Page post, then publish the planned tafsir/sharh and source-link comments. Reuse recorded post/comment IDs on retries; never create duplicates when an ID is already recorded.
-5. Call `public.dawah_confirm_publish` only after the post and required comments succeed; never fabricate a Facebook post ID.
-6. Add idempotency, retry/backoff, run locking, error logging and pause/resume checks. Database claim/record/release primitives are in place; scheduled orchestration and full retry flow remain to be built.
-7. Seed verified Quran and hadith source records with provenance and permitted translation/commentary use.
-8. Run a controlled end-to-end test, verify the sequence advances only after full success, then explicitly enable automation.
-
-## Editorial rules
-- Never invent Quran text, hadith text, translations, references, tafsir or attribution.
-- Quran caption: full Arabic verse and full Bengali translation with surah/ayah reference.
-- Quran comments: Tafsir Ibn Kathir and Tafhim-ul-Quran explanations/authorized excerpts, plus two source links; other reputable tafsir links may be added occasionally.
-- Hadith caption: full Arabic and Bengali translation with collection/reference.
-- Hadith comments: two reliable sharh/explanation comments and two source links.
-- Respect copyright/licensing; do not reproduce long copyrighted translations/commentaries without permission.
-- Photo-card work is deferred. Keep the approved minimal white editorial style and subject-relevant imagery when resumed.
-
-## Current database findings
-- Queue columns now additionally include tafsir_ibn_kathir, tafhimul_quran, explanation_one, explanation_two, source_links, translation_source, arabic_source, external_comment_one_id, external_comment_two_id, worker_claim_token, worker_claimed_at, publish_attempts and last_publish_attempt_at.
-- Added private RPCs: dawah_claim_next_content, dawah_record_post, dawah_record_comment and dawah_release_content_claim. They are executable by service_role only; authenticated users cannot execute them.
-- Added public wrappers dawah_worker_claim, dawah_worker_record_post, dawah_worker_record_comment and dawah_worker_release. These are SECURITY INVOKER; only service_role can execute them. anon and authenticated cannot execute them.
-- Strengthened public.dawah_confirm_publish: it now requires a real recorded Facebook post ID and both recorded comment IDs before marking the item published or advancing the sequence. It is service_role-only.
-- Current schedule slots are enabled: Quran 05:45,16:45,20:45; Bukhari 09:00; Muslim 13:45; Tirmidhi 18:15.
-- Security audit: public.dawah_confirm_publish runs as SECURITY INVOKER, owned by postgres; service_role has the required table privileges and can execute it, while authenticated cannot. Do not change it to SECURITY DEFINER.
-- Supabase Security Advisor also reports six RLS-enabled tables with no policies (the private operational tables and public autopost_slots/autopost_log), plus leaked-password protection disabled. The no-policy tables are currently intentionally inaccessible to anon/authenticated; review this before adding any frontend access.
+## Security notes
+- The worker uses the Supabase service-role key only inside its server-side Edge Function environment; never expose it to Make or the browser.
+- The worker's custom secret must remain outside GitHub, chat messages and plain scenario fields.
+- `public.dawah_confirm_publish` must remain SECURITY INVOKER and service_role-only.
