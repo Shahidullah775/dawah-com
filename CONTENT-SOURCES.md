@@ -53,3 +53,39 @@ A queue item must not be approved unless it has:
 6. A human editorial review record.
 
 No placeholder, guessed, or AI-invented Quran/Hadith content may enter the production queue.
+
+
+## Approved online import candidates (reviewed 2026-11-24)
+
+### Bengali Quran translation — QuranEnc
+
+- Candidate edition: Bengali Translation — Dr. Abu Bakr Muhammad Zakaria, key `bengali_zakaria`, version 1.1.1 (as listed by QuranEnc).
+- API: `https://quranenc.com/api/v1/translation/aya/bengali_zakaria/{sura}/{aya}`
+- Source and terms: https://quranenc.com/bn/home and https://quranenc.com/bn/home/api/index.html.md
+- Republishing terms: content must remain unchanged (no modification, addition, or deletion); credit QuranEnc.com; state the version; retain the translation/version information; report notes to the source; update to the latest version; no inappropriate advertisements.
+- Rule: preserve the returned translation and footnotes exactly. This is a possible replacement source, not permission to silently replace the user's previously selected London Academy edition.
+
+### Bengali hadith translation and explanation — HadeethEnc
+
+- Candidate source: HadeethEnc.com, Bengali API language code `bn`.
+- API: `https://hadeethenc.com/api/v1/hadeeths/one/?language=bn&id={id}`; the corresponding Arabic record is `https://hadeethenc.com/api/v1/hadeeths/one/?language=ar&id={id}`.
+- API documentation: https://github.com/islamhouse-dev/hadith-api
+- Republishing terms: content must remain unchanged; credit HadeethEnc.com; state the version and preserve version information; report notes to the source; keep content updated; no inappropriate advertisements.
+- Coverage limitation: HadeethEnc is a curated translated-hadith encyclopedia, not a guaranteed complete, sequential digital edition of Sahih al-Bukhari, Sahih Muslim, or Jami at-Tirmidhi. Import only records whose original collection and exact hadith number are explicitly verified in the Arabic record's references. Never fabricate a collection number or fill a sequence gap with a different narration.
+
+### Hadith Arabic source candidate — Fawaz Ahmed hadith-api
+
+- API/CDN: https://github.com/fawazahmed0/hadith-api
+- Candidate editions include Arabic collections for Bukhari, Muslim, and Tirmidhi.
+- The repository's code licence and the data rights are not automatically identical. Verify the specific edition's source and licence before redistributing any record. Do not rely on the repository's code licence alone as proof that every text/translation is cleared.
+- Use as a cross-check/reference candidate only until edition-level data rights and exact numbering are confirmed.
+
+## Automated import policy
+
+- External source data first enters a staging/review state, never directly into the publishable queue.
+- Every imported record must retain source URL, collection/edition, translation key/version, fetch timestamp, exact reference, and source text unchanged.
+- Quran Arabic must pass an exact-text integrity check against the pinned Tanzil edition.
+- A hadith may enter a collection stream only when its exact collection and numbering convention are confirmed; otherwise keep it in a separate unassigned review list.
+- The importer must be idempotent: repeated runs must not create duplicate source records.
+- A human reviewer must approve every record before it becomes publishable.
+- No AI-generated translation or commentary may be labelled as a source's verbatim translation or tafsir.
