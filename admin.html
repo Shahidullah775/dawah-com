@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dawah.com | Admin</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+<style>
+:root{--navy:#102d27;--green:#176345;--gold:#d7a84a;--bg:#f3f6f3;--line:#dce7df}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#20372d;font-family:system-ui,'Noto Sans Bengali',sans-serif}button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:11px 15px;background:var(--green);color:white;font-weight:650;cursor:pointer}button.secondary{background:#e7eee9;color:#214b39}button.danger{background:#a33c35}button:disabled{opacity:.5;cursor:not-allowed}.top{background:var(--navy);color:white;padding:17px max(5%,calc((100% - 1100px)/2));display:flex;justify-content:space-between;align-items:center}.top a{color:#e5f2e9}.wrap{max-width:1100px;margin:28px auto;padding:0 16px}.auth{max-width:460px;margin:40px auto;background:white;border:1px solid var(--line);border-radius:16px;padding:25px}.muted,small{color:#718078;line-height:1.7}.field{margin:13px 0}.field label{display:block;font-weight:650;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cad8ce;border-radius:9px;background:#fff}.field textarea{min-height:90px;resize:vertical}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.tabs button{flex:1}.active{background:var(--navy)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:13px}.metric{font-size:26px;font-weight:750;color:var(--green)}.layout{display:grid;grid-template-columns:minmax(280px, .85fr) minmax(0,1.4fr);gap:18px}.item{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;background:#fff}.arabic{font-size:22px;line-height:1.9;text-align:right}.msg{padding:11px;border-radius:9px;margin:12px 0;background:#edf4ef}.err{background:#fff0ed;color:#963b2d}.hide{display:none!important}.pill{font-size:12px;padding:4px 8px;border-radius:30px;background:#eaf1eb}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}h1,h2,h3{color:var(--navy)}@media(max-width:760px){.layout{grid-template-columns:1fr}.top{padding:16px}.wrap{margin:18px auto}}
+</style></head><body>
+<header class="top"><strong>Dawah.com · অ্যাডমিন প্যানেল</strong><a href="/">পাবলিক ওয়েবসাইট</a></header>
+<main class="wrap">
+<section id="auth" class="auth"><h1>অ্যাডমিন লগইন</h1><p class="muted">নির্ধারিত অ্যাডমিন অ্যাকাউন্ট দিয়ে প্রবেশ করুন।</p><div class="tabs"><button id="loginTab" class="active" type="button">লগইন</button><button id="signupTab" class="secondary" type="button">প্রথম অ্যাকাউন্ট</button></div>
+<div class="field"><label>ইমেইল</label><input id="email" type="email" value="monsurofficial71@gmail.com" readonly></div><div class="field"><label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password" placeholder="পাসওয়ার্ড লিখুন"></div><button id="authBtn" style="width:100%">লগইন করুন</button><div id="authMsg" class="msg hide"></div><p class="muted">পাসওয়ার্ড কখনো কাউকে পাঠাবেন না।</p></section>
+<section id="dashboard" class="hide">
+<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:3px">কনটেন্ট ড্যাশবোর্ড</h1><div id="who" class="muted"></div></div><button id="logout" class="secondary">লগআউট</button></div>
+<div id="notice" class="msg hide"></div>
+<div class="grid" id="metrics"></div>
+<div class="card" id="settingsCard"><h2>প্রকাশনা সেটিংস</h2><div class="row"><div class="field"><label>প্রকাশনা পদ্ধতি</label><select id="mode"><option value="auto">Auto Mode</option><option value="approval">Approval Mode</option></select></div><div class="field"><label><input id="automation" type="checkbox" style="width:auto"> স্বয়ংক্রিয় প্রকাশ চালু</label></div><button id="saveSettings">সেটিংস সংরক্ষণ</button></div><p class="muted">স্বয়ংক্রিয় প্রকাশ এখন বন্ধ রাখুন—Facebook সংযোগ ও প্রকাশক কর্মী পরীক্ষা না হওয়া পর্যন্ত এটি চালু হবে না।</p></div>
+<div class="card" id="inviteCard"><h2>মডারেটর আমন্ত্রণ</h2><div class="row"><input id="inviteEmail" type="email" placeholder="মডারেটরের ইমেইল" style="padding:11px;border:1px solid #cad8ce;border-radius:9px;flex:1;min-width:200px"><button id="inviteBtn">আমন্ত্রণ পাঠান</button></div></div>
+<div class="layout"><section class="card"><h2 id="formTitle">নতুন কনটেন্ট যোগ করুন</h2><form id="contentForm">
+<input id="contentId" type="hidden"><div class="field"><label>কনটেন্টের ধরন</label><select id="contentType"><option value="quran">কোরআন</option><option value="hadith">হাদিস</option></select></div>
+<div class="field"><label>উৎস / গ্রন্থ</label><select id="source"><option value="Quran">আল-কোরআন</option><option value="Sahih al-Bukhari">সহিহ বুখারি</option><option value="Sahih Muslim">সহিহ মুসলিম</option><option value="Jami at-Tirmidhi">জামে আত-তিরমিজি</option></select></div>
+<div class="field"><label>ক্রমিক নম্বর</label><input id="sequence" type="number" min="1" required placeholder="যেমন: 1"></div>
+<div class="field"><label>আরবি মূল পাঠ</label><textarea id="arabic" dir="rtl" required></textarea></div>
+<div class="field"><label>বাংলা অনুবাদ</label><textarea id="translation" required></textarea></div>
+<div class="field"><label>বাংলা ব্যাখ্যা / তাফসির / শরহ</label><textarea id="commentary"></textarea></div>
+<div class="field"><label>সুনির্দিষ্ট সূত্র / রেফারেন্স</label><input id="reference" required placeholder="সূরা ও আয়াত / গ্রন্থ, অধ্যায় ও হাদিস নম্বর"></div>
+<div class="field"><label>ফটোকার্ডের সংক্ষিপ্ত লেখা</label><textarea id="cardText"></textarea></div>
+<div class="actions"><button type="submit">সংরক্ষণ করুন</button><button type="button" id="clearForm" class="secondary">ফর্ম পরিষ্কার</button></div></form><p class="muted">কোনো আয়াত, হাদিস, অনুবাদ বা সূত্র অনুমান করে যোগ করবেন না। মূল উৎস যাচাই করে কনটেন্ট জমা দিন।</p></section>
+<section class="card"><div class="row" style="justify-content:space-between"><h2>কনটেন্ট কিউ</h2><button id="refresh" class="secondary">রিফ্রেশ</button></div><div id="queue"></div></section></div>
+<div class="card"><h2>প্রকাশনার সময়সূচি পরিবর্তন</h2><p class="muted">বাংলাদেশ সময় (Asia/Dhaka)। অ্যাডমিন এখান থেকে প্রতিটি প্রকাশনার সময় ও চালু/বন্ধ অবস্থা পরিবর্তন করতে পারবেন। কোরআনের তিনটি সময় একই ধারাবাহিক পাঠ ব্যবহার করবে।</p><form id="scheduleForm"><div id="slots" class="grid"></div><button type="submit" id="saveSchedule">সময়সূচি সংরক্ষণ</button></form></div>
+<div class="card"><h2>সাম্প্রতিক প্রকাশনা লগ</h2><div id="logs" class="muted">এখনো কোনো প্রকাশনা লগ নেই।</div></div>
+</section></main>
+<script>
+const SUPABASE_URL="https://hcanzohgtnzhchjnwfdw.supabase.co";
+const SUPABASE_KEY="sb_publishable_AWSoNrXTBY2knYFDR6eY-w_xuSHXQ_4";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const API=SUPABASE_URL+"/functions/v1/dawah-admin-api";
+const BOOT=SUPABASE_URL+"/functions/v1/dawah-bootstrap-admin";
+let session=null, staffRole=null, dashboardData=null;
+const $=id=>document.getElementById(id);
+function message(id,text,error=false){const el=$(id);el.textContent=text;el.classList.remove("hide","err");if(error)el.classList.add("err")}
+function hide(id){$(id).classList.add("hide")}
+async function callApi(body){const res=await fetch(API,{method:body?"POST":"GET",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});const data=await res.json();if(!res.ok)throw new Error(data.error||"সার্ভার অনুরোধ ব্যর্থ");return data}
+async function bootstrap(){try{const r=await fetch(BOOT,{method:"POST",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:"{}"});if(r.ok)return;const d=await r.json().catch(()=>({}));if(r.status!==409 && !String(d.error||"").toLowerCase().includes("already"))throw new Error(d.error||"প্রথম অ্যাডমিন সেটআপ সম্পন্ন হয়নি");}catch(e){throw e}}
+$("loginTab").onclick=()=>{ $("loginTab").className="active";$("signupTab").className="secondary";$("authBtn").textContent="লগইন করুন";$("authBtn").dataset.mode="login";$("password").autocomplete="current-password";hide("authMsg")};
+$("signupTab").onclick=()=>{ $("signupTab").className="active";$("loginTab").className="secondary";$("authBtn").textContent="প্রথম অ্যাডমিন অ্যাকাউন্ট তৈরি";$("authBtn").dataset.mode="signup";$("password").autocomplete="new-password";hide("authMsg")};
+$("authBtn").dataset.mode="login";
+$("authBtn").onclick=async()=>{const email=$("email").value,password=$("password").value;if(password.length<8){message("authMsg","কমপক্ষে ৮ অক্ষরের পাসওয়ার্ড দিন।",true);return}const btn=$("authBtn");btn.disabled=true;try{if(btn.dataset.mode==="signup"){const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+"/admin.html"}});if(error)throw error;if(data.session){session=data.session;await bootstrap();await loadDashboard()}else message("authMsg","অ্যাকাউন্টের নিশ্চিতকরণ লিংক ইমেইলে পাঠানো হয়েছে। ইমেইল যাচাই করে লগইন করুন।")}else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;session=data.session;await bootstrap();await loadDashboard()}}catch(e){message("authMsg",e.message||"লগইন ব্যর্থ হয়েছে।",true)}finally{btn.disabled=false}};
+async function loadDashboard(){const data=await callApi();staffRole=data.role;dashboardData=data; $("auth").classList.add("hide");$("dashboard").classList.remove("hide");$("who").textContent=(data.user.email||"")+" · "+(staffRole==="admin"?"অ্যাডমিন":"মডারেটর");$("settingsCard").classList.toggle("hide",staffRole!=="admin");$("inviteCard").classList.toggle("hide",staffRole!=="admin");$("mode").value=data.settings.publishing_mode;$("automation").checked=data.settings.automation_enabled;renderDashboard(data.dashboard)}
+function renderDashboard(d){const c=d.counts||{};$("metrics").innerHTML=[["খসড়া",c.draft],["অনুমোদনের অপেক্ষায়",c.pending_approval],["অনুমোদিত",c.approved],["নির্ধারিত",c.scheduled],["প্রকাশিত",c.published],["ব্যর্থ",c.failed]].map(x=>'<div class="card"><div class="muted">'+x[0]+'</div><div class="metric">'+(x[1]||0)+'</div></div>').join("");renderQueue(d.items||[]);renderSchedule(d.slots||[]);$("logs").innerHTML=(d.recent_logs||[]).length?(d.recent_logs||[]).map(l=>'<div class="item"><b>'+esc(l.slot_id)+'</b> · '+esc(l.status)+' · '+esc(l.reference||"")+'<div class="muted">'+new Date(l.created_at).toLocaleString("bn-BD")+(l.error?" · "+esc(l.error):"")+'</div></div>').join(""):"এখনো কোনো প্রকাশনা লগ নেই।"}
+
+function renderSchedule(slots){
+ const labels={quran_stream:"কোরআন — ফজর, আসর ও এশা",bukhari:"সহিহ বুখারি",dhuhr_muslim:"সহিহ মুসলিম",tirmidhi:"জামে আত-তিরমিজি"};
+ $("slots").innerHTML=slots.map(s=>{
+  const times=String(s.schedule_time||"").split(",").map(x=>x.trim());
+  const timeFields=s.id==="quran_stream"?["ফজর","আসর","এশা"]:["প্রকাশনার সময়"];
+  const fields=timeFields.map((label,i)=>'<div class="field"><label>'+label+'</label><input type="time" data-slot-time="'+esc(s.id)+'" value="'+esc(times[i]||"05:45")+'" required></div>').join("");
+  return '<div class="card"><b>'+esc(labels[s.id]||s.source_name)+'</b>'+fields+'<label class="muted"><input type="checkbox" data-slot-enabled="'+esc(s.id)+'" '+(s.enabled?"checked":"")+' style="width:auto"> এই প্রকাশনা সক্রিয়</label><div class="muted">পরবর্তী ক্রম: '+esc(s.next_sequence)+'</div></div>';
+ }).join("");
+}
+$("scheduleForm").onsubmit=async e=>{
+ e.preventDefault();
+ const slots=(dashboardData.dashboard.slots||[]).map(s=>{
+  const times=[...document.querySelectorAll('[data-slot-time="'+s.id+'"]')].map(x=>x.value);
+  return {id:s.id,schedule_time:times.join(","),enabled:document.querySelector('[data-slot-enabled="'+s.id+'"]').checked};
+ });
+ const btn=$("saveSchedule");btn.disabled=true;
+ try{await callApi({action:"update_schedule",slots});await refresh();message("notice","প্রকাশনার সময়সূচি সফলভাবে সংরক্ষণ হয়েছে।")}
+ catch(e){message("notice",e.message,true)}
+ finally{btn.disabled=false}
+};
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderQueue(items){$("queue").innerHTML=items.length?items.map(q=>'<article class="item"><div class="row"><b>'+esc(q.source_name)+' · '+q.sequence_no+'</b><span class="pill">'+esc(q.status)+'</span></div><div class="arabic">'+esc(q.arabic_text)+'</div><p>'+esc(q.bengali_translation)+'</p><div class="muted">'+esc(q.reference_text)+'</div><div class="actions"><button class="secondary" onclick="editItem(\''+q.id+'\')">সম্পাদনা</button><button onclick="reviewItem(\''+q.id+'\',\'approve\')">অনুমোদন</button><button class="danger" onclick="reviewItem(\''+q.id+'\',\'reject\')">বাতিল</button></div></article>').join(""):"<p class='muted'>কিউতে এখনো কোনো কনটেন্ট নেই। যাচাইকৃত কনটেন্ট যোগ করুন।</p>"}
+window.editItem=id=>{const q=(dashboardData.dashboard.items||[]).find(x=>x.id===id);if(!q)return;$("contentId").value=q.id;$("contentType").value=q.content_type;$("source").value=q.source_name;$("sequence").value=q.sequence_no;$("arabic").value=q.arabic_text;$("translation").value=q.bengali_translation;$("commentary").value=q.commentary||"";$("reference").value=q.reference_text;$("cardText").value=q.card_text||"";$("formTitle").textContent="কনটেন্ট সম্পাদনা";window.scrollTo({top:0,behavior:"smooth"})};
+window.reviewItem=async(id,action)=>{if(!confirm(action==="approve"?"এই কনটেন্ট অনুমোদন করবেন?":"এই কনটেন্ট বাতিল করবেন?"))return;try{await callApi({action:"queue_"+action,payload:{id}});await refresh()}catch(e){alert(e.message)}};
+async function refresh(){const data=await callApi();dashboardData=data;renderDashboard(data.dashboard)}
+$("contentType").onchange=()=>{const hadith=$("contentType").value==="hadith";$("source").value=hadith?"Sahih al-Bukhari":"Quran"};
+$("contentForm").onsubmit=async e=>{e.preventDefault();const payload={content_type:$("contentType").value,source_name:$("source").value,sequence_no:Number($("sequence").value),arabic_text:$("arabic").value,bengali_translation:$("translation").value,commentary:$("commentary").value,reference_text:$("reference").value,card_text:$("cardText").value};const id=$("contentId").value;if(id)payload.id=id;try{await callApi({action:id?"queue_update":"queue_create",payload});$("contentForm").reset();$("contentId").value="";$("formTitle").textContent="নতুন কনটেন্ট যোগ করুন";await refresh();message("notice","কনটেন্ট সংরক্ষণ হয়েছে।")}catch(e){message("notice",e.message,true)}};
+$("clearForm").onclick=()=>{$("contentForm").reset();$("contentId").value="";$("formTitle").textContent="নতুন কনটেন্ট যোগ করুন"};
+$("refresh").onclick=async()=>{try{await refresh()}catch(e){message("notice",e.message,true)}};
+$("saveSettings").onclick=async()=>{try{await callApi({action:"update_settings",publishing_mode:$("mode").value,automation_enabled:$("automation").checked});message("notice","সেটিংস সংরক্ষিত হয়েছে।")}catch(e){message("notice",e.message,true)}};
+$("inviteBtn").onclick=async()=>{try{await callApi({action:"invite_moderator",email:$("inviteEmail").value});message("notice","মডারেটর আমন্ত্রণ পাঠানো হয়েছে।");$("inviteEmail").value=""}catch(e){message("notice",e.message,true)}};
+$("logout").onclick=async()=>{await sb.auth.signOut();session=null;$("dashboard").classList.add("hide");$("auth").classList.remove("hide")};
+sb.auth.getSession().then(async({data})=>{if(data.session){session=data.session;try{await loadDashboard()}catch(e){message("authMsg",e.message,true);$("auth").classList.remove("hide")}}});
+</script></body></html>
