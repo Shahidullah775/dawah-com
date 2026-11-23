@@ -47,3 +47,9 @@
 
 ## Secrets
 Never commit Supabase service-role keys, Facebook access tokens, passwords, or other private credentials.
+
+## Latest production deployment — 2026-11-24
+- Latest Git-linked production deployment: READY.
+- Commit: `db24db5fc6be5d6719f1e71e6d39a28ee78b119b` (Admin Panel content-editor source fields).
+- Production alias: https://dawah-com-source.vercel.app/
+- The admin HTML route returns HTTP 200 from the production deployment. Authenticated browser login and end-to-end form submission still require an administrator session to verify.
