@@ -4,11 +4,11 @@
 
 ## Live site
 
-- Public website: https://dawah-com.vercel.app/
-- Admin panel: https://dawah-com.vercel.app/admin.html
-- Quran: https://dawah-com.vercel.app/quran.html
-- Hadith: https://dawah-com.vercel.app/hadith.html
-- Archive: https://dawah-com.vercel.app/archive.html
+- Public website: https://dawah-com-source.vercel.app/
+- Admin panel: https://dawah-com-source.vercel.app/admin.html
+- Quran: https://dawah-com-source.vercel.app/quran.html
+- Hadith: https://dawah-com-source.vercel.app/hadith.html
+- Archive: https://dawah-com-source.vercel.app/archive.html
 
 ## Stack
 
@@ -50,8 +50,13 @@ The public browser client uses the Supabase publishable/anon key. This key is de
 
 ## Automation status
 
-Facebook publishing is **not yet connected**. No GitHub scheduled job should publish content until the Facebook Page, secure server-side token storage, publishing worker, error handling, and successful end-to-end tests are complete. The admin automation switch is intentionally kept off until then.
+Facebook Page connection and the secure worker API are connected, but the scheduled publisher workflow is **not yet live**. No GitHub scheduled job should publish content until the Facebook Page, secure server-side token storage, publishing worker, error handling, and successful end-to-end tests are complete. The admin automation switch is intentionally kept off until then.
 
 ## Security
 
 See [SECURITY.md](SECURITY.md). Report exposed secrets immediately and rotate them; do not place secrets in issues or commits.
+
+
+## Admin content editor
+
+The Admin Panel now saves the complete editorial record for each queue item: Arabic and Bengali text, reference, Tafhim-ul-Quran, Tafsir Ibn Kathir, additional source notes, external tafsir URLs, translation provenance, and Arabic text source/version. The dashboard read RPC returns these fields for editing. The database migration is `20261123222832_dawah_admin_content_sources_fields`.
