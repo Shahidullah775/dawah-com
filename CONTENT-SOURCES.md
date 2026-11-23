@@ -92,3 +92,14 @@ No placeholder, guessed, or AI-invented Quran/Hadith content may enter the produ
 - The importer must be idempotent: repeated runs must not create duplicate source records.
 - A human reviewer must approve every record before it becomes publishable.
 - No AI-generated translation or commentary may be labelled as a source's verbatim translation or tafsir.
+
+
+## Automated Quran collection status (2026-11-24)
+
+- Supabase Cron job: `dawah-quran-auto-collector-15m`, active, runs every 15 minutes.
+- Edge Function: `dawah-quran-auto-collector`, active. It claims the next sura, fetches the full sura from the QuranEnc API, validates sura/ayah order and source IDs, then upserts records into the isolated review staging table.
+- Rate limiting: database claim lock and a 15-minute next-run gate; repeated calls cannot advance the collection faster than one sura per 15 minutes.
+- Cursor: starts at sura 1 and advances only after the complete sura has been stored successfully. Failed requests are retried after the next interval.
+- First live collection verified: Surah Al-Fatiha, 7/7 ayat, pending review; next sura is 2.
+- Collection stops after sura 114. This is collection only: it does not approve or publish content and does not enable Facebook autopost.
+- QuranEnc API list endpoint currently returned only its first Bengali translation item in the runtime test, so the collector uses the pinned, previously verified `bengali_zakaria` key and version 1.1.1. A change to the source edition requires a deliberate review/update rather than silently switching translations.
