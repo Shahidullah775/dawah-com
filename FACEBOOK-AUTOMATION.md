@@ -72,3 +72,9 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - The worker uses the Supabase service-role key only inside its server-side Edge Function environment; never expose it to Make or the browser.
 - The worker's custom secret must remain outside GitHub, chat messages and plain scenario fields.
 - Do not change `public.dawah_confirm_publish` to SECURITY DEFINER.
+
+## Admin Panel origin fix — 2026-11-24
+- The production site domain `https://dawah-com-source.vercel.app` was missing from the CORS allowlists in the deployed admin API and first-admin bootstrap function.
+- Updated and redeployed `dawah-admin-api` to ACTIVE version 8 and `dawah-bootstrap-admin` to ACTIVE version 3. The production origin is now explicitly allowed; the moderator invitation redirect and fallback origin use the current production domain.
+- Both deployed Edge Function source files are now version-controlled at `supabase/functions/dawah-admin-api/index.ts` and `supabase/functions/dawah-bootstrap-admin/index.ts`.
+- Read-back verification confirmed both deployed functions contain the production domain. A full browser login and dashboard interaction test still requires an authenticated admin session and has not yet been completed.
