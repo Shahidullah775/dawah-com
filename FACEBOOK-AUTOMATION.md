@@ -78,3 +78,10 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Updated and redeployed `dawah-admin-api` to ACTIVE version 8 and `dawah-bootstrap-admin` to ACTIVE version 3. The production origin is now explicitly allowed; the moderator invitation redirect and fallback origin use the current production domain.
 - Both deployed Edge Function source files are now version-controlled at `supabase/functions/dawah-admin-api/index.ts` and `supabase/functions/dawah-bootstrap-admin/index.ts`.
 - Read-back verification confirmed both deployed functions contain the production domain. A full browser login and dashboard interaction test still requires an authenticated admin session and has not yet been completed.
+
+## Retry recovery improvement — 2026-11-24
+- Applied database migration `20261123221750_return_all_recorded_comment_ids_from_worker_claim`.
+- The worker claim response now returns previously recorded Facebook comment IDs 1–5, in addition to the existing post ID and first two comment IDs. This is required for a retry workflow to detect completed steps and avoid reposting comments that already succeeded.
+- Verified the updated private claim function retains its existing SECURITY DEFINER + empty search_path + service_role guard. anon and authenticated cannot execute it; service_role can.
+- The database migration is version-controlled in `supabase/migrations/20261123221750_return_all_recorded_comment_ids_from_worker_claim.sql`.
+- This improves the recovery data contract; the full Make publisher flow and end-to-end retry test are still pending.
