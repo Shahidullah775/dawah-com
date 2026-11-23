@@ -54,7 +54,7 @@ Deno.serve(async (req: Request) => {
       const slotId = String(body.slot_id ?? "");
       const allowed = new Set(["quran_stream", "bukhari", "dhuhr_muslim", "tirmidhi"]);
       if (!allowed.has(slotId)) return json({ error: "invalid_slot_id" }, 400);
-      const { data, error } = await supabase.schema("private").rpc("dawah_claim_next_content", {
+      const { data, error } = await supabase.rpc("dawah_worker_claim", {
         p_slot_id: slotId,
       });
       if (error) throw error;
@@ -70,7 +70,7 @@ Deno.serve(async (req: Request) => {
 
     if (op === "record_post") {
       const postId = String(body.facebook_post_id ?? "");
-      const { data, error } = await supabase.schema("private").rpc("dawah_record_post", {
+      const { data, error } = await supabase.rpc("dawah_worker_record_post", {
         p_queue_id: queueId, p_claim_token: claimToken, p_facebook_post_id: postId,
       });
       if (error) throw error;
@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
       const commentNumber = Number(body.comment_number);
       const commentId = String(body.facebook_comment_id ?? "");
       if (![1, 2].includes(commentNumber)) return json({ error: "comment_number_must_be_1_or_2" }, 400);
-      const { data, error } = await supabase.schema("private").rpc("dawah_record_comment", {
+      const { data, error } = await supabase.rpc("dawah_worker_record_comment", {
         p_queue_id: queueId, p_claim_token: claimToken,
         p_comment_number: commentNumber, p_facebook_comment_id: commentId,
       });
@@ -101,7 +101,7 @@ Deno.serve(async (req: Request) => {
 
     if (op === "release") {
       const message = String(body.error_message ?? "Publishing attempt failed").slice(0, 1000);
-      const { data, error } = await supabase.schema("private").rpc("dawah_release_content_claim", {
+      const { data, error } = await supabase.rpc("dawah_worker_release", {
         p_queue_id: queueId, p_claim_token: claimToken, p_error: message,
       });
       if (error) throw error;
