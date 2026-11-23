@@ -63,7 +63,10 @@ No placeholder, guessed, or AI-invented Quran/Hadith content may enter the produ
 - API: `https://quranenc.com/api/v1/translation/aya/bengali_zakaria/{sura}/{aya}`
 - Source and terms: https://quranenc.com/bn/home and https://quranenc.com/bn/home/api/index.html.md
 - Republishing terms: content must remain unchanged (no modification, addition, or deletion); credit QuranEnc.com; state the version; retain the translation/version information; report notes to the source; update to the latest version; no inappropriate advertisements.
-- Rule: preserve the returned translation and footnotes exactly. This is a possible replacement source, not permission to silently replace the user's previously selected London Academy edition.
+- User approval: approved on 2026-11-24 as the Bengali Quran translation for Dawah.com, replacing the previously intended London Academy translation.
+- Import implementation: the admin dashboard can fetch one complete sura into the isolated `dawah_source_staging` table. Records retain the API URL, edition key/version, raw source response, Arabic text, translation, and footnotes. They remain pending human review and are not published automatically.
+- Arabic-text caution: the same API response includes an Arabic text field. It is explicitly labelled as QuranEnc API Arabic text and must be cross-checked against the pinned Tanzil Uthmani v1.1 text before publication; it is not labelled as Tanzil text merely because it is Arabic.
+- Rule: preserve the returned translation and footnotes exactly; do not strip footnote markers or rewrite the translation. This approved edition replaces the previous intended London Academy edition for future imports.
 
 ### Bengali hadith translation and explanation — HadeethEnc
 
