@@ -63,6 +63,7 @@ const API=SUPABASE_URL+"/functions/v1/dawah-admin-api";
 const BOOT=SUPABASE_URL+"/functions/v1/dawah-bootstrap-admin";
 let session=null, staffRole=null, dashboardData=null;
 const $=id=>document.getElementById(id);
+document.addEventListener("click",event=>{const btn=event.target.closest("button");if(!btn||btn.disabled)return;btn.dataset.loading="true";clearTimeout(btn._loadingTimer);btn._loadingTimer=setTimeout(()=>{delete btn.dataset.loading},1400)},true);
 function message(id,text,error=false){const el=$(id);el.textContent=text;el.classList.remove("hide","err");if(error)el.classList.add("err")}
 function hide(id){$(id).classList.add("hide")}
 async function callApi(body){const res=await fetch(API,{method:body?"POST":"GET",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});const data=await res.json();if(!res.ok)throw new Error(data.error||"সার্ভার অনুরোধ ব্যর্থ");return data}
