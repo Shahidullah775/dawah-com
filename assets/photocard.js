@@ -440,6 +440,13 @@
     }
     setBusy(false); await refreshCards(); updateButtons();
   }
+  async function webPublish(on) {
+    if (!st.card) return;
+    setBusy(true);
+    try { var r = await api("card_web_publish", { id: st.card.id, publish: on }); st.card = r.card; msg(on ? "কার্ড ওয়েবসাইটে প্রকাশিত হয়েছে (/cards.html)।" : "কার্ড ওয়েবসাইট থেকে সরানো হয়েছে।", "ok"); }
+    catch (e) { msg("ব্যর্থ: " + e.message, "err"); }
+    setBusy(false); await refreshCards(); updateButtons();
+  }
   async function approve() {
     if (!st.card) return;
     setBusy(true);
@@ -599,13 +606,15 @@
       var n = b.getAttribute("data-needs"), ok = !st.busy;
       if (n === "content") ok = ok && !!st.content;
       if (n === "export") ok = ok && canExport();
+      if (n === "web") ok = ok && !!st.card && st.card.status === "approved" && !st.dirty && !st.card.stale && !st.card.website_published_at;
+      if (n === "unweb") ok = ok && !!st.card && !!st.card.website_published_at;
       if (n === "approve") ok = ok && !!st.card && st.card.status === "ready_for_review" && !st.dirty && !st.card.stale;
       b.disabled = !ok;
     });
     var badge = $("#pcsStatus");
     if (badge) {
       var s = st.card ? st.card.status : "draft";
-      badge.textContent = (STATUS[s] || s) + (st.dirty && st.card ? " (অসংরক্ষিত পরিবর্তন)" : "");
+      badge.textContent = (STATUS[s] || s) + (st.card && st.card.website_published_at ? " · ওয়েবসাইটে প্রকাশিত" : "") + (st.dirty && st.card ? " (অসংরক্ষিত পরিবর্তন)" : "");
       badge.className = "pcs-badge s-" + s;
     }
     var rb = $("#pcsRetry"); if (rb && !(st.card && st.card.status === "failed")) rb.style.display = "none";
@@ -664,8 +673,8 @@
       '<div><label><input type="checkbox" data-k="showRef"> রেফারেন্স</label><label><input type="checkbox" data-k="showCredit"> উৎস-ক্রেডিট</label><label><input type="checkbox" data-k="showLogo"> Dawah.com লোগো</label></div>' +
       '</div>' +
       '<div class="pcs-row" style="margin-top:12px"><button type="button" class="secondary" id="pcsPng" data-needs="export">PNG ডাউনলোড</button><button type="button" class="secondary" id="pcsJpg" data-needs="export">JPG ডাউনলোড</button>' +
-      '<button type="button" id="pcsSave" data-needs="export">সংরক্ষণ (রিভিউয়ের জন্য)</button><button type="button" id="pcsApprove" data-needs="approve">অনুমোদন দিন</button></div>' +
-      '<small class="pcs-muted">অনুমোদনের পর ওয়েবসাইট ও Facebook-এ প্রকাশ পরবর্তী ধাপে যুক্ত হবে; বর্তমান স্বয়ংক্রিয় পোস্টিং অপরিবর্তিত।</small>' +
+      '<button type="button" id="pcsSave" data-needs="export">সংরক্ষণ (রিভিউয়ের জন্য)</button><button type="button" id="pcsApprove" data-needs="approve">অনুমোদন দিন</button><button type="button" id="pcsWeb" data-needs="web">ওয়েবসাইটে প্রকাশ</button><button type="button" class="secondary" id="pcsUnweb" data-needs="unweb">ওয়েবসাইট থেকে সরান</button></div>' +
+      '<small class="pcs-muted">অনুমোদনের পর "ওয়েবসাইটে প্রকাশ" দিলে কার্ড /cards.html-এ দেখা যায়। Facebook-এ ছবি পোস্ট এখনো চালু নয়; বর্তমান স্বয়ংক্রিয় পোস্টিং অপরিবর্তিত।</small>' +
       '</div></div></div></details>';
 
     var sz = $("#pcsSize"); Object.keys(SIZES).forEach(function (k) { var o = document.createElement("option"); o.value = k; o.textContent = SIZES[k].label; sz.appendChild(o); });
@@ -696,6 +705,7 @@
     $("#pcsNoImg").onclick = function () { st.image = null; st.imgEl = null; syncControls(); markDirty(); };
     $("#pcsPng").onclick = function () { dl("png"); }; $("#pcsJpg").onclick = function () { dl("jpg"); };
     $("#pcsSave").onclick = exportAndSave; $("#pcsApprove").onclick = approve;
+    $("#pcsWeb").onclick = function () { webPublish(true); }; $("#pcsUnweb").onclick = function () { webPublish(false); };
 
     api("categories").then(function (r) {
       r.categories.forEach(function (c) { var o = document.createElement("option"); o.value = c.id; o.textContent = c.label; $("#pcsCat").appendChild(o); });

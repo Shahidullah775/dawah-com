@@ -275,6 +275,11 @@ Deno.serve(async (req: Request) => {
         const card = await rpc("dawah_card_set_status", { p_id: body.id, p_status: String(body.status), p_error: String(body.error ?? "").slice(0, 500) });
         return json({ card }, 200, origin);
       }
+      case "card_web_publish": {
+        if (!ID_RE.test(String(body.id))) throw new HttpError(400, "অবৈধ কার্ড ID");
+        const card = await rpc("dawah_card_website_publish", { p_id: body.id, p_publish: body.publish !== false });
+        return json({ card }, 200, origin);
+      }
       case "card_list": {
         const cards = await rpc("dawah_card_list", {
           p_content_id: body.content_id && ID_RE.test(String(body.content_id)) ? body.content_id : null, p_limit: 50,
