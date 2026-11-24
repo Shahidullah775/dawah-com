@@ -6,7 +6,7 @@
 <header class="top"><strong>Dawah.com · অ্যাডমিন প্যানেল</strong><a href="/">পাবলিক ওয়েবসাইট</a></header>
 <main class="wrap">
 <section id="auth" class="auth"><h1>অ্যাডমিন লগইন</h1><p class="muted">নির্ধারিত অ্যাডমিন অ্যাকাউন্ট দিয়ে প্রবেশ করুন।</p><div class="tabs"><button id="loginTab" class="active" type="button">লগইন</button><button id="signupTab" class="secondary" type="button">প্রথম অ্যাকাউন্ট</button></div>
-<div class="field"><label>ইমেইল</label><input id="email" type="email" value="monsurofficial71@gmail.com" readonly></div><div class="field"><label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password" placeholder="পাসওয়ার্ড লিখুন"></div><button id="authBtn" style="width:100%">লগইন করুন</button><div id="authMsg" class="msg hide"></div><p class="muted">পাসওয়ার্ড কখনো কাউকে পাঠাবেন না।</p></section>
+<div class="field"><label>ইমেইল</label><input id="email" type="email" value="monsurofficial71@gmail.com" readonly></div><div class="field"><label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password" placeholder="পাসওয়ার্ড লিখুন"></div><button id="authBtn" style="width:100%">লগইন করুন</button><button id="forgotPasswordBtn" type="button" class="secondary" style="width:100%;margin-top:9px">পাসওয়ার্ড ভুলে গেছেন? পাসওয়ার্ড রিসেট করুন</button><div id="authMsg" class="msg hide"></div><section id="resetPanel" class="hide"><h3>নতুন পাসওয়ার্ড সেট করুন</h3><div class="field"><label>নতুন পাসওয়ার্ড</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="কমপক্ষে ৮ অক্ষর"></div><div class="field"><label>নতুন পাসওয়ার্ড নিশ্চিত করুন</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="আবার লিখুন"></div><button id="saveNewPassword" type="button" style="width:100%">নতুন পাসওয়ার্ড সংরক্ষণ</button></section><p class="muted">পাসওয়ার্ড কখনো কাউকে পাঠাবেন না।</p></section>
 <section id="dashboard" class="hide">
 <div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:3px">কনটেন্ট ড্যাশবোর্ড</h1><div id="who" class="muted"></div></div><button id="logout" class="secondary">লগআউট</button></div>
 <div id="notice" class="msg hide"></div>
@@ -15,6 +15,8 @@
 <div class="card" id="hadithSourceCard"><h2>অনলাইন থেকে হাদিস সংগ্রহ</h2><p class="muted">সহিহ বুখারি, সহিহ মুসলিম ও জামে আত-তিরমিজির আরবি পাঠ নির্দিষ্ট Git commit থেকে স্বয়ংক্রিয়ভাবে সংগ্রহ হচ্ছে। বাংলা অনুবাদ আনা হচ্ছে না। উৎস-ডেটার অধিকার ও আলেমি যাচাই না হওয়া পর্যন্ত কোনো হাদিস প্রকাশনা কিউতে যাবে না।</p><div id="hadithImportStatus" class="msg"></div><h3>সংগৃহীত আরবি হাদিস — যাচাই বাকি</h3><div id="hadithStagingList"><p class="muted">এখনো কোনো হাদিস সংগ্রহ করা হয়নি।</p></div></div>
 <div class="card" id="settingsCard"><h2>প্রকাশনা সেটিংস</h2><div class="row"><div class="field"><label>প্রকাশনা পদ্ধতি</label><select id="mode"><option value="auto">Auto Mode</option><option value="approval">Approval Mode</option></select></div><div class="field"><label><input id="automation" type="checkbox" style="width:auto"> স্বয়ংক্রিয় প্রকাশ চালু</label></div><button id="saveSettings">সেটিংস সংরক্ষণ</button></div><p class="muted">স্বয়ংক্রিয় প্রকাশ এখন বন্ধ রাখুন—Facebook সংযোগ ও প্রকাশক কর্মী পরীক্ষা না হওয়া পর্যন্ত এটি চালু হবে না।</p></div>
 <div class="card" id="inviteCard"><h2>মডারেটর আমন্ত্রণ</h2><div class="row"><input id="inviteEmail" type="email" placeholder="মডারেটরের ইমেইল" style="padding:11px;border:1px solid #cad8ce;border-radius:9px;flex:1;min-width:200px"><button id="inviteBtn">আমন্ত্রণ পাঠান</button></div></div>
+
+<div class="card" id="photocardStudio"></div>
 
 <div class="card" id="photoCardPanel">
 <h2>ফটোকার্ড তৈরি</h2>
@@ -45,9 +47,7 @@
 <div class="field"><label>তাফসির ইবনে কাসির — ব্যাখ্যা</label><textarea id="ibnKathir"></textarea></div>
 <div class="field"><label>অতিরিক্ত ব্যাখ্যা / উৎস নোট ১</label><textarea id="explanationOne"></textarea></div>
 <div class="field"><label>অতিরিক্ত ব্যাখ্যা / উৎস নোট ২</label><textarea id="explanationTwo"></textarea></div>
-<div class="field"><label>অন্যান্য নির্ভরযোগ্য তাফসিরের লিংক (প্রতি লাইনে একটি URL)</label><textarea id="sourceLinks" placeholder="https://..."></textarea></div>
-<div class="field"><label>বাংলা অনুবাদের উৎস / অনুবাদক / সংস্করণ</label><input id="translationSource" placeholder="যেমন: অনুবাদক, প্রকাশক ও সংস্করণ"></div>
-<div class="field"><label>আরবি মূল পাঠের উৎস / সংস্করণ</label><input id="arabicSource" placeholder="যেমন: Tanzil Uthmani v1.1"></div>
+<div class="field"><label>অন্যান্য নির্ভরযোগ্য তাফসিরের লিংক (প্রতি লাইনে একটি URL)</label><textarea id="sourceLinks" placeholder="https://..."></textarea></div><div class="field"><label>বাংলা অনুবাদের উৎস / অনুবাদক / সংস্করণ</label><input id="translationSource" placeholder="যেমন: অনুবাদক, প্রকাশক ও সংস্করণ"></div><div class="field"><label>আরবি মূল পাঠের উৎস / সংস্করণ</label><input id="arabicSource" placeholder="যেমন: Tanzil Uthmani v1.1"></div>
 <div class="field"><label>সুনির্দিষ্ট সূত্র / রেফারেন্স</label><input id="reference" required placeholder="সূরা ও আয়াত / গ্রন্থ, অধ্যায় ও হাদিস নম্বর"></div>
 <div class="field"><label>মূল Facebook পোস্টের ক্যাপশন</label><textarea id="cardText" placeholder="আরবি আয়াত/হাদিস, রেফারেন্স এবং প্রয়োজনীয় সংক্ষিপ্ত লেখা"></textarea></div>
 <div class="actions"><button type="submit">সংরক্ষণ করুন</button><button type="button" id="clearForm" class="secondary">ফর্ম পরিষ্কার</button></div></form><p class="muted">কোনো আয়াত, হাদিস, অনুবাদ বা সূত্র অনুমান করে যোগ করবেন না। মূল উৎস যাচাই করে কনটেন্ট জমা দিন।</p></section>
@@ -67,7 +67,10 @@ function message(id,text,error=false){const el=$(id);el.textContent=text;el.clas
 function hide(id){$(id).classList.add("hide")}
 async function callApi(body){const res=await fetch(API,{method:body?"POST":"GET",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});const data=await res.json();if(!res.ok)throw new Error(data.error||"সার্ভার অনুরোধ ব্যর্থ");return data}
 async function bootstrap(){try{const r=await fetch(BOOT,{method:"POST",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:"{}"});if(r.ok)return;const d=await r.json().catch(()=>({}));if(r.status!==409 && !String(d.error||"").toLowerCase().includes("already"))throw new Error(d.error||"প্রথম অ্যাডমিন সেটআপ সম্পন্ন হয়নি");}catch(e){throw e}}
-$("loginTab").onclick=()=>{ $("loginTab").className="active";$("signupTab").className="secondary";$("authBtn").textContent="লগইন করুন";$("authBtn").dataset.mode="login";$("password").autocomplete="current-password";hide("authMsg")};
+$("loginTab").onclick=()=>{ $("loginTab").className="active";$("signupTab").className="secondary";$("authBtn").textContent="লগইন করুন";$("authBtn").dataset.mode="login";
+$("forgotPasswordBtn").onclick=async()=>{const email=$("email").value;const btn=$("forgotPasswordBtn");btn.disabled=true;try{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/admin.html"});if(error)throw error;message("authMsg","পাসওয়ার্ড রিসেটের লিংক পাঠানোর অনুরোধ সফল হয়েছে। Gmail-এর Inbox, Spam ও Promotions ফোল্ডার দেখুন।");}catch(e){message("authMsg",e.message||"রিসেট ইমেইল পাঠানো যায়নি।",true)}finally{btn.disabled=false}};
+$("saveNewPassword").onclick=async()=>{const p=$("newPassword").value,c=$("confirmPassword").value;if(p.length<8){message("authMsg","নতুন পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।",true);return}if(p!==c){message("authMsg","দুটি পাসওয়ার্ড মিলছে না।",true);return}const btn=$("saveNewPassword");btn.disabled=true;try{const {error}=await sb.auth.updateUser({password:p});if(error)throw error;await sb.auth.signOut();session=null;$("resetPanel").classList.add("hide");$("forgotPasswordBtn").classList.remove("hide");$("authBtn").classList.remove("hide");$("password").parentElement.classList.remove("hide");$("loginTab").classList.remove("hide");$("signupTab").classList.remove("hide");$("password").value="";message("authMsg","পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে। এখন নতুন পাসওয়ার্ড দিয়ে লগইন করুন।");}catch(e){message("authMsg",e.message||"পাসওয়ার্ড পরিবর্তন করা যায়নি।",true)}finally{btn.disabled=false}};
+sb.auth.onAuthStateChange((event,newSession)=>{if(event==="PASSWORD_RECOVERY"){session=newSession;$("dashboard").classList.add("hide");$("auth").classList.remove("hide");$("resetPanel").classList.remove("hide");$("forgotPasswordBtn").classList.add("hide");$("authBtn").classList.add("hide");$("password").parentElement.classList.add("hide");$("loginTab").classList.add("hide");$("signupTab").classList.add("hide");message("authMsg","নতুন পাসওয়ার্ড দিন।");}});$("password").autocomplete="current-password";hide("authMsg")};
 $("signupTab").onclick=()=>{ $("signupTab").className="active";$("loginTab").className="secondary";$("authBtn").textContent="প্রথম অ্যাডমিন অ্যাকাউন্ট তৈরি";$("authBtn").dataset.mode="signup";$("password").autocomplete="new-password";hide("authMsg")};
 $("authBtn").dataset.mode="login";
 $("authBtn").onclick=async()=>{const email=$("email").value,password=$("password").value;if(password.length<8){message("authMsg","কমপক্ষে ৮ অক্ষরের পাসওয়ার্ড দিন।",true);return}const btn=$("authBtn");btn.disabled=true;try{if(btn.dataset.mode==="signup"){const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+"/admin.html"}});if(error)throw error;if(data.session){session=data.session;await bootstrap();await loadDashboard()}else message("authMsg","অ্যাকাউন্টের নিশ্চিতকরণ লিংক ইমেইলে পাঠানো হয়েছে। ইমেইল যাচাই করে লগইন করুন।")}else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;session=data.session;await bootstrap();await loadDashboard()}}catch(e){message("authMsg",e.message||"লগইন ব্যর্থ হয়েছে।",true)}finally{btn.disabled=false}};
@@ -94,9 +97,7 @@ $("scheduleForm").onsubmit=async e=>{
  catch(e){message("notice",e.message,true)}
  finally{btn.disabled=false}
 };
-
-function renderStaged(items){
- $("stagingList").innerHTML=items.length?items.filter(x=>x.review_status==="pending_review").map(x=>'<article class="item"><div class="row"><b>সূরা '+esc(x.sura_number)+' · আয়াত '+esc(x.aya_number)+'</b><span class="pill">যাচাই বাকি</span></div><div class="arabic">'+esc(x.arabic_text)+'</div><p>'+esc(x.bengali_translation)+'</p><div class="muted">'+esc(x.source_name)+' · v'+esc(x.source_version)+'<br>'+esc(x.arabic_source)+'</div><div class="actions"><button onclick="stageQueue(\''+x.id+'\')">পর্যালোচনা কিউতে পাঠান</button></div></article>').join(""):"<p class='muted'>যাচাইয়ের অপেক্ষায় কোনো নতুন আয়াত নেই।</p>";
+function renderStaged(items){ $("stagingList").innerHTML=items.length?items.filter(x=>x.review_status==="pending_review").map(x=>'<article class="item"><div class="row"><b>সূরা '+esc(x.sura_number)+' · আয়াত '+esc(x.aya_number)+'</b><span class="pill">যাচাই বাকি</span></div><div class="arabic">'+esc(x.arabic_text)+'</div><p>'+esc(x.bengali_translation)+'</p><div class="muted">'+esc(x.source_name)+' · v'+esc(x.source_version)+'<br>'+esc(x.arabic_source)+'</div><div class="actions"><button onclick="stageQueue(\''+x.id+'\')">পর্যালোচনা কিউতে পাঠান</button></div></article>').join(""):"<p class='muted'>যাচাইয়ের অপেক্ষায় কোনো নতুন আয়াত নেই।</p>";
 }
 function renderHadithStatus(rows){
  const labels={bukhari:"সহিহ বুখারি",muslim:"সহিহ মুসলিম",tirmidhi:"জামে আত-তিরমিজি"};
@@ -144,9 +145,7 @@ async function pcDraw(content,imageUrl){
  ctx.fillStyle="#fffdf6";ctx.font='700 '+font+'px "Noto Sans Bengali"';
  for(const line of lines){ctx.fillText(line,540,y,870);y+=lineH}
  ctx.fillStyle="#f1d99e";ctx.font='600 30px "Noto Sans Bengali"';ctx.fillText(String(content.reference_text||""),540,895,900);
- ctx.fillStyle="rgba(255,253,246,.9)";ctx.font='500 23px "Noto Sans Bengali"';ctx.fillText("DAWAH.COM",540,970);
-}
-async function pcBlob(type,quality){return await new Promise((resolve,reject)=>$("pcCanvas").toBlob(b=>b?resolve(b):reject(new Error("কার্ড ফাইল তৈরি হয়নি")),type,quality))}
+ ctx.fillStyle="rgba(255,253,246,.9)";ctx.font='500 23px "Noto Sans Bengali"';ctx.fillText("DAWAH.COM",540,970);}async function pcBlob(type,quality){return await new Promise((resolve,reject)=>$("pcCanvas").toBlob(b=>b?resolve(b):reject(new Error("কার্ড ফাইল তৈরি হয়নি")),type,quality))}
 async function pcUpload(blob,ext){
  const signed=await cardApi({action:"upload_url",kind:"card",content_id:pcContent.id,ext});
  const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,blob,{contentType:ext==="png"?"image/png":"image/jpeg",upsert:false});
@@ -170,4 +169,6 @@ $("saveSettings").onclick=async()=>{try{await callApi({action:"update_settings",
 $("inviteBtn").onclick=async()=>{try{await callApi({action:"invite_moderator",email:$("inviteEmail").value});message("notice","মডারেটর আমন্ত্রণ পাঠানো হয়েছে।");$("inviteEmail").value=""}catch(e){message("notice",e.message,true)}};
 $("logout").onclick=async()=>{await sb.auth.signOut();session=null;$("dashboard").classList.add("hide");$("auth").classList.remove("hide")};
 sb.auth.getSession().then(async({data})=>{if(data.session){session=data.session;try{await loadDashboard()}catch(e){message("authMsg",e.message,true);$("auth").classList.remove("hide")}}});
-</script></body></html>
+</script>
+<script src="/assets/photocard.js"></script>
+</body></html>

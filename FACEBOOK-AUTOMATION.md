@@ -7,15 +7,15 @@ Last verified: 2026-11-24
 - Make Facebook Pages connection is healthy (connection 13348261).
 - A controlled test post and comment were created successfully; test post ID: 1474802262379886_122095983891564645.
 - Worker API test through Make returned HTTP 200 and `{"status":"paused"}`, confirming the authenticated request reached the worker while automation was disabled.
-- Supabase Edge Function `dawah-autopost-worker` is ACTIVE, version 4, verify_jwt=false, protected by the `x-dawah-worker-secret` header.
-- Make worker verification scenario 8765326 is active and on-demand. Facebook test scenarios 8764810, 8764707 and 8764674 are inactive. Existing unrelated Make scenario 8543045 remains active and was not changed.
+- Supabase Edge Function `dawah-autopost-worker` is ACTIVE, version 7, verify_jwt=false, protected by the `x-dawah-worker-secret` header.
+- Make Scheduled Publisher scenario 8765714 is inactive and contains the guarded photocard lookup → CreatePostWithPhotos → record_post → confirm route, plus a no-card release route. Comment Queue Dispatcher scenario 8766765 is active. Worker verification scenario 8765326 and Facebook test scenarios 8764810, 8764707 and 8764674 are inactive.
 - GitHub repository: https://github.com/Shahidullah775/dawah-com
 
 ## Safety state — do not enable live publishing yet
-- Supabase `private.dawah_settings`: publishing_mode=auto, timezone=Asia/Dhaka, automation_enabled=false.
-- Production content queue: 0 records. Published content: 0 records.
+- Supabase `private.dawah_settings`: publishing_mode=approval, timezone=Asia/Dhaka, automation_enabled=false.
+- Production content queue: 3,788 records (3,785 approved, 2 published, 1 failed). The failed record's Facebook post ID is still present only in its error text; do not retry it until that existing post is independently checked.
 - Four DB slots are enabled: quran_stream, bukhari, dhuhr_muslim, tirmidhi.
-- `pg_cron` and `pg_net` are not currently installed/enabled; only `supabase_vault` was found among the checked extensions.
+- `pg_cron` is installed in `pg_catalog`; `pg_net` is installed in `public` and is flagged by the Supabase advisor; `supabase_vault` is installed in `vault`.
 - Do not enable automation or create live posts until the complete scheduler, source-verified content, retry/idempotency and end-to-end verification are implemented.
 - Never share or commit the worker secret or Supabase service-role key. The worker secret is stored in Supabase Edge Function Secrets and the matching Make API-key connection was approved by the owner.
 
@@ -93,3 +93,22 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Database migration: `20261123222832_dawah_admin_content_sources_fields` (applied and verified).
 - This closes a data-entry gap: the previous form only saved the generic commentary field and silently omitted the dedicated tafsir/source fields needed by the planned comment workflow.
 - No production content was inserted. Queue count remains zero, and automation remains disabled.
+
+## Photo card image for Facebook posts — guarded route configured, scenario inactive
+- `dawah-card-for-post` is deployed and read-only. It returns a short-lived signed image URL only for the newest approved card whose source record is unchanged.
+- Make scenario 8765714 now calls the lookup after a successful queue claim. When `image_url` exists, module 22 (`facebook-pages:CreatePostWithPhotos`) publishes the image with the Bengali caption; the post ID is recorded and the worker confirmation follows. When no approved image exists, module 23 releases the claim without publishing. The old text-only fallback is not used on this route.
+- The scenario is still inactive. There are currently zero photo cards, zero approved photo cards, and no verified end-to-end photocard post. Do not activate or publish until an administrator has created and approved a card and the owner authorizes a controlled test.
+- A prior failed queue row contains a Facebook post ID in `error_message` but `external_post_id` is null. Do not retry it until the Facebook post is independently checked and the row is reconciled.
+
+
+## Comment retry recovery — 2026-11-24
+- Applied migration `20261124161108_recover_comment_jobs_with_recorded_external_id`.
+- If a comment job is reclaimed after its Facebook comment ID was already persisted, the claim RPC now marks it posted and returns `already_posted`; the Make dispatcher only creates a comment for `status=claimed`, so it will not publish that same comment again.
+- The function remains SECURITY DEFINER with an empty search_path and an explicit service_role check. Verification confirmed all 8 existing comment jobs are posted and have a Facebook comment ID.
+- This closes the retry window after the external comment ID has been saved. A failure between Facebook accepting a comment and the subsequent ID-persistence request still requires reconciliation; no client-side idempotency key is available from Facebook Pages CreateComment.
+
+
+## Quran reference normalization — 2026-11-24
+- Normalized 3,788 Quran queue references to Bengali surah names and ayah numbers using QuranEnc's official Bengali surah-name endpoint (`sowar_names?iso_code=bn`, all 114 names).
+- Arabic Quran text and Bengali translation were not changed by this update; only the reference label was normalized.
+- Applied migration `20261124161254_normalize_quran_surah_references` so the change is version-controlled and reproducible.
