@@ -637,7 +637,7 @@
     addFonts();
     var st0 = document.createElement("style"); st0.textContent = CSS; document.head.appendChild(st0);
     root.innerHTML =
-      '<details class="pcs"><summary>🖼️ AI ফটো কার্ড স্টুডিও (কুরআন ও হাদিস)</summary><div class="pcs-body">' +
+      '<details class="pcs" open><summary>🖼️ AI ফটো কার্ড স্টুডিও (কুরআন ও হাদিস)</summary><div class="pcs-body">' +
       '<p class="pcs-muted">AI শুধু ব্যাকগ্রাউন্ড ছবি বানায়। আরবি, বাংলা ও রেফারেন্স সরাসরি ডাটাবেস থেকে বসানো হয় — AI কখনো আয়াত/হাদিস লেখে না।</p>' +
       '<div id="pcsMsg" class="pcs-msg"></div>' +
       '<div class="pcs-cols"><div>' +
