@@ -15,6 +15,7 @@
 <div class="card" id="hadithSourceCard"><h2>অনলাইন থেকে হাদিস সংগ্রহ</h2><p class="muted">সহিহ বুখারি, সহিহ মুসলিম ও জামে আত-তিরমিজির আরবি পাঠ নির্দিষ্ট Git commit থেকে স্বয়ংক্রিয়ভাবে সংগ্রহ হচ্ছে। বাংলা অনুবাদ আনা হচ্ছে না। উৎস-ডেটার অধিকার ও আলেমি যাচাই না হওয়া পর্যন্ত কোনো হাদিস প্রকাশনা কিউতে যাবে না।</p><div id="hadithImportStatus" class="msg"></div><h3>সংগৃহীত আরবি হাদিস — যাচাই বাকি</h3><div id="hadithStagingList"><p class="muted">এখনো কোনো হাদিস সংগ্রহ করা হয়নি।</p></div></div>
 <div class="card" id="settingsCard"><h2>প্রকাশনা সেটিংস</h2><div class="row"><div class="field"><label>প্রকাশনা পদ্ধতি</label><select id="mode"><option value="auto">Auto Mode</option><option value="approval">Approval Mode</option></select></div><div class="field"><label><input id="automation" type="checkbox" style="width:auto"> স্বয়ংক্রিয় প্রকাশ চালু</label></div><button id="saveSettings">সেটিংস সংরক্ষণ</button></div><p class="muted">স্বয়ংক্রিয় প্রকাশ এখন বন্ধ রাখুন—Facebook সংযোগ ও প্রকাশক কর্মী পরীক্ষা না হওয়া পর্যন্ত এটি চালু হবে না।</p></div>
 <div class="card" id="inviteCard"><h2>মডারেটর আমন্ত্রণ</h2><div class="row"><input id="inviteEmail" type="email" placeholder="মডারেটরের ইমেইল" style="padding:11px;border:1px solid #cad8ce;border-radius:9px;flex:1;min-width:200px"><button id="inviteBtn">আমন্ত্রণ পাঠান</button></div></div>
+<div id="photocardStudio"></div>
 <div class="layout"><section class="card"><h2 id="formTitle">নতুন কনটেন্ট যোগ করুন</h2><form id="contentForm">
 <input id="contentId" type="hidden"><div class="field"><label>কনটেন্টের ধরন</label><select id="contentType"><option value="quran">কোরআন</option><option value="hadith">হাদিস</option></select></div>
 <div class="field"><label>উৎস / গ্রন্থ</label><select id="source"><option value="Quran">আল-কোরআন</option><option value="Sahih al-Bukhari">সহিহ বুখারি</option><option value="Sahih Muslim">সহিহ মুসলিম</option><option value="Jami at-Tirmidhi">জামে আত-তিরমিজি</option></select></div>
@@ -102,4 +103,4 @@ $("saveSettings").onclick=async()=>{try{await callApi({action:"update_settings",
 $("inviteBtn").onclick=async()=>{try{await callApi({action:"invite_moderator",email:$("inviteEmail").value});message("notice","মডারেটর আমন্ত্রণ পাঠানো হয়েছে।");$("inviteEmail").value=""}catch(e){message("notice",e.message,true)}};
 $("logout").onclick=async()=>{await sb.auth.signOut();session=null;$("dashboard").classList.add("hide");$("auth").classList.remove("hide")};
 sb.auth.getSession().then(async({data})=>{if(data.session){session=data.session;try{await loadDashboard()}catch(e){message("authMsg",e.message,true);$("auth").classList.remove("hide")}}});
-</script></body></html>
+</script><script src="assets/photocard.js" defer></script></body></html>
