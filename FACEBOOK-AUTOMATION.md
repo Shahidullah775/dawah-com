@@ -99,3 +99,10 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Make scenario 8765714 now calls the lookup after a successful queue claim. When `image_url` exists, module 22 (`facebook-pages:CreatePostWithPhotos`) publishes the image with the Bengali caption; the post ID is recorded and the worker confirmation follows. When no approved image exists, module 23 releases the claim without publishing. The old text-only fallback is not used on this route.
 - The scenario is still inactive. There are currently zero photo cards, zero approved photo cards, and no verified end-to-end photocard post. Do not activate or publish until an administrator has created and approved a card and the owner authorizes a controlled test.
 - A prior failed queue row contains a Facebook post ID in `error_message` but `external_post_id` is null. Do not retry it until the Facebook post is independently checked and the row is reconciled.
+
+
+## Comment retry recovery — 2026-11-24
+- Applied migration `20261124161230_recover_comment_jobs_with_recorded_external_id`.
+- If a comment job is reclaimed after its Facebook comment ID was already persisted, the claim RPC now marks it posted and returns `already_posted`; the Make dispatcher only creates a comment for `status=claimed`, so it will not publish that same comment again.
+- The function remains SECURITY DEFINER with an empty search_path and an explicit service_role check. Verification confirmed all 8 existing comment jobs are posted and have a Facebook comment ID.
+- This closes the retry window after the external comment ID has been saved. A failure between Facebook accepting a comment and the subsequent ID-persistence request still requires reconciliation; no client-side idempotency key is available from Facebook Pages CreateComment.
