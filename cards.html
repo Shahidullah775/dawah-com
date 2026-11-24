@@ -1,0 +1,25 @@
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Dawah.com-এর প্রকাশিত কোরআন ও হাদিসের ফটো কার্ড"><title>ফটো কার্ড | Dawah.com</title><link rel="stylesheet" href="/assets/site.css">
+<style>.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.pc{background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 5px 20px #193e3010}.pc img{width:100%;height:auto;display:block}.pc-b{padding:12px 14px}.pc-b a{color:var(--deep);font-weight:600}.pc-b small{display:block;color:var(--muted);margin-top:4px}</style></head>
+<body data-page="cards"><header class="top"><a class="brand" href="/">Dawah.com</a><nav class="nav"><a href="/">হোম</a><a href="/quran.html">কোরআন</a><a href="/hadith.html">হাদিস</a><a href="/archive.html">আর্কাইভ</a><a href="/cards.html">ফটো কার্ড</a><a href="/admin.html">অ্যাডমিন</a></nav></header>
+<main class="wrap"><div class="section-head"><div><span class="eyebrow">PHOTO CARDS</span><h2>ফটো কার্ড</h2><p class="muted">পর্যালোচনা ও অনুমোদনের পর প্রকাশিত কার্ড। আরবি, অনুবাদ ও সূত্র যাচাইকৃত ডাটাবেস থেকে নেওয়া।</p></div></div><div id="grid" class="cards-grid"><div class="empty">কার্ড লোড হচ্ছে…</div></div></main>
+<footer class="footer"><div class="footer-inner"><b>Dawah.com</b><div><a href="/quran.html">কোরআন পাঠ</a> · <a href="/hadith.html">হাদিস পাঠ</a> · <a href="/archive.html">আর্কাইভ</a></div></div></footer>
+<script>
+(function(){
+var grid=document.getElementById("grid");
+function msg(t){grid.textContent="";var d=document.createElement("div");d.className="empty";d.textContent=t;grid.appendChild(d);}
+fetch("https://hcanzohgtnzhchjnwfdw.supabase.co/functions/v1/dawah-public-cards").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(d){
+  var cards=d.cards||[]; if(!cards.length)return msg("এখনো কোনো ফটো কার্ড প্রকাশিত হয়নি।");
+  grid.textContent="";
+  cards.forEach(function(c){
+    var f=document.createElement("figure");f.className="pc";f.style.margin="0";
+    var a=document.createElement("a");a.href=c.image_url;a.target="_blank";a.rel="noopener";
+    var im=document.createElement("img");im.loading="lazy";im.src=c.image_url;
+    im.alt=(c.reference_text||"")+" — "+(c.bengali_translation||"").slice(0,120);
+    a.appendChild(im);f.appendChild(a);
+    var b=document.createElement("figcaption");b.className="pc-b";
+    var l=document.createElement("a");l.href=c.content_type==="hadith"?"/hadith.html":"/quran.html";l.textContent=c.reference_text||"";
+    b.appendChild(l);f.appendChild(b);grid.appendChild(f);
+  });
+}).catch(function(){msg("কার্ড লোড করা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।");});
+})();
+</script></body></html>
