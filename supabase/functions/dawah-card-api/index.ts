@@ -19,8 +19,12 @@ const allowedOrigins = new Set([
   "https://dawah-com-source-git-feature-photo-3c567e-monsurofficial71-5051.vercel.app",
 ]);
 const fallbackOrigin = "https://dawah-com-source.vercel.app";
+// Allow only this Vercel project’s deployment and branch-preview hosts.
+const isAllowedOrigin = (origin: string | null) =>
+  !!origin && (allowedOrigins.has(origin) ||
+    /^https:\/\/dawah-com-source-[a-z0-9-]+-monsurofficial71-5051\.vercel\.app$/.test(origin));
 const headersFor = (origin: string | null) => ({
-  "Access-Control-Allow-Origin": origin && allowedOrigins.has(origin) ? origin : fallbackOrigin,
+  "Access-Control-Allow-Origin": isAllowedOrigin(origin) ? origin! : fallbackOrigin,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Vary": "Origin",
