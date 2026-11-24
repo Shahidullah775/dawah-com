@@ -12,7 +12,7 @@ Last verified: 2026-11-24
 - GitHub repository: https://github.com/Shahidullah775/dawah-com
 
 ## Safety state — do not enable live publishing yet
-- Supabase `private.dawah_settings`: publishing_mode=auto, timezone=Asia/Dhaka, automation_enabled=false.
+- Supabase `private.dawah_settings`: publishing_mode=approval, timezone=Asia/Dhaka, automation_enabled=false.
 - Production content queue: 3,788 records (3,785 approved, 2 published, 1 failed). The failed record's Facebook post ID is still present only in its error text; do not retry it until that existing post is independently checked.
 - Four DB slots are enabled: quran_stream, bukhari, dhuhr_muslim, tirmidhi.
 - `pg_cron` is installed in `pg_catalog`; `pg_net` is installed in `public` and is flagged by the Supabase advisor; `supabase_vault` is installed in `vault`.
