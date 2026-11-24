@@ -15,6 +15,8 @@ const allowedOrigins = new Set([
   "https://dawah-com.vercel.app",
   "https://dawah-com-monsurofficial71-5051.vercel.app",
   "https://dawah-com-source.vercel.app",
+  "https://dawah-com-source-b1rt80ijb-monsurofficial71-5051.vercel.app",
+  "https://dawah-com-source-git-feature-photo-3c567e-monsurofficial71-5051.vercel.app",
 ]);
 const fallbackOrigin = "https://dawah-com-source.vercel.app";
 const headersFor = (origin: string | null) => ({
