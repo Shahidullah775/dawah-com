@@ -2,7 +2,7 @@
 <html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dawah.com | Admin</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
 <style>
 :root{--navy:#102d27;--green:#176345;--gold:#d7a84a;--bg:#f3f6f3;--line:#dce7df}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#20372d;font-family:system-ui,'Noto Sans Bengali',sans-serif}button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:11px 15px;background:var(--green);color:white;font-weight:650;cursor:pointer}button.secondary{background:#e7eee9;color:#214b39}button.danger{background:#a33c35}button:disabled{opacity:.5;cursor:not-allowed}.top{background:var(--navy);color:white;padding:17px max(5%,calc((100% - 1100px)/2));display:flex;justify-content:space-between;align-items:center}.top a{color:#e5f2e9}.wrap{max-width:1100px;margin:28px auto;padding:0 16px}.auth{max-width:460px;margin:40px auto;background:white;border:1px solid var(--line);border-radius:16px;padding:25px}.muted,small{color:#718078;line-height:1.7}.field{margin:13px 0}.field label{display:block;font-weight:650;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cad8ce;border-radius:9px;background:#fff}.field textarea{min-height:90px;resize:vertical}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.tabs button{flex:1}.active{background:var(--navy)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:13px}.metric{font-size:26px;font-weight:750;color:var(--green)}.layout{display:grid;grid-template-columns:minmax(280px, .85fr) minmax(0,1.4fr);gap:18px}.item{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;background:#fff}.arabic{font-size:22px;line-height:1.9;text-align:right}.msg{padding:11px;border-radius:9px;margin:12px 0;background:#edf4ef}.err{background:#fff0ed;color:#963b2d}.hide{display:none!important}.pill{font-size:12px;padding:4px 8px;border-radius:30px;background:#eaf1eb}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}h1,h2,h3{color:var(--navy)}@media(max-width:760px){.layout{grid-template-columns:1fr}.top{padding:16px}.wrap{margin:18px auto}}
-</style></head><body>
+</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head><body>
 <header class="top"><strong>Dawah.com · অ্যাডমিন প্যানেল</strong><a href="/">পাবলিক ওয়েবসাইট</a></header>
 <main class="wrap">
 <section id="auth" class="auth"><h1>অ্যাডমিন লগইন</h1><p class="muted">নির্ধারিত অ্যাডমিন অ্যাকাউন্ট দিয়ে প্রবেশ করুন।</p><div class="tabs"><button id="loginTab" class="active" type="button">লগইন</button><button id="signupTab" class="secondary" type="button">প্রথম অ্যাকাউন্ট</button></div>
@@ -15,7 +15,27 @@
 <div class="card" id="hadithSourceCard"><h2>অনলাইন থেকে হাদিস সংগ্রহ</h2><p class="muted">সহিহ বুখারি, সহিহ মুসলিম ও জামে আত-তিরমিজির আরবি পাঠ নির্দিষ্ট Git commit থেকে স্বয়ংক্রিয়ভাবে সংগ্রহ হচ্ছে। বাংলা অনুবাদ আনা হচ্ছে না। উৎস-ডেটার অধিকার ও আলেমি যাচাই না হওয়া পর্যন্ত কোনো হাদিস প্রকাশনা কিউতে যাবে না।</p><div id="hadithImportStatus" class="msg"></div><h3>সংগৃহীত আরবি হাদিস — যাচাই বাকি</h3><div id="hadithStagingList"><p class="muted">এখনো কোনো হাদিস সংগ্রহ করা হয়নি।</p></div></div>
 <div class="card" id="settingsCard"><h2>প্রকাশনা সেটিংস</h2><div class="row"><div class="field"><label>প্রকাশনা পদ্ধতি</label><select id="mode"><option value="auto">Auto Mode</option><option value="approval">Approval Mode</option></select></div><div class="field"><label><input id="automation" type="checkbox" style="width:auto"> স্বয়ংক্রিয় প্রকাশ চালু</label></div><button id="saveSettings">সেটিংস সংরক্ষণ</button></div><p class="muted">স্বয়ংক্রিয় প্রকাশ এখন বন্ধ রাখুন—Facebook সংযোগ ও প্রকাশক কর্মী পরীক্ষা না হওয়া পর্যন্ত এটি চালু হবে না।</p></div>
 <div class="card" id="inviteCard"><h2>মডারেটর আমন্ত্রণ</h2><div class="row"><input id="inviteEmail" type="email" placeholder="মডারেটরের ইমেইল" style="padding:11px;border:1px solid #cad8ce;border-radius:9px;flex:1;min-width:200px"><button id="inviteBtn">আমন্ত্রণ পাঠান</button></div></div>
-<div id="photocardStudio"></div>
+
+<div class="card" id="photocardStudio"></div>
+
+<div class="card" id="photoCardPanel">
+<h2>ফটোকার্ড তৈরি</h2>
+<p class="muted">অনুমোদিত কনটেন্ট বেছে AI-তৈরি টেক্সটবিহীন ব্যাকগ্রাউন্ডে বাংলা অনুবাদ বসিয়ে ১০৮০×১০৮০ কার্ড তৈরি করুন। কার্ড আগে পর্যালোচনায় যাবে; অনুমোদনের আগে স্বয়ংক্রিয়ভাবে প্রকাশ হবে না।</p>
+<div class="row">
+<div class="field" style="min-width:180px;flex:1"><label>উৎস</label><select id="pcSource"><option value="">সব উৎস</option><option value="Quran">আল-কোরআন</option><option value="Sahih al-Bukhari">সহিহ বুখারি</option><option value="Sahih Muslim">সহিহ মুসলিম</option><option value="Jami at-Tirmidhi">জামে আত-তিরমিজি</option></select></div>
+<div class="field" style="min-width:180px;flex:2"><label>রেফারেন্স / অনুবাদ দিয়ে খুঁজুন</label><input id="pcQuery" placeholder="যেমন: আল-ফাতিহা ১:১"></div>
+<button type="button" id="pcSearch">কনটেন্ট খুঁজুন</button>
+</div>
+<div id="pcResults" class="muted">কনটেন্ট খুঁজে একটি নির্বাচন করুন।</div>
+<div id="pcEditor" class="hide">
+<div class="item"><div id="pcRef" class="muted"></div><p id="pcTranslation"></p></div>
+<div class="actions"><button type="button" id="pcGenerate">AI ব্যাকগ্রাউন্ড তৈরি ও কার্ড সাজান</button><button type="button" id="pcSave" disabled>পর্যালোচনার জন্য সংরক্ষণ</button><button type="button" id="pcApprove" class="secondary" disabled>কার্ড অনুমোদন</button></div>
+<div id="pcMsg" class="msg hide"></div>
+<div style="max-width:620px;margin:16px auto"><canvas id="pcCanvas" width="1080" height="1080" style="width:100%;height:auto;border-radius:12px;border:1px solid #dce7df;background:#f4f0e7"></canvas></div>
+</div>
+<h3>সাম্প্রতিক ফটোকার্ড</h3><div id="pcList" class="muted">কার্ডের তালিকা লোড হচ্ছে…</div>
+</div>
+
 <div class="layout"><section class="card"><h2 id="formTitle">নতুন কনটেন্ট যোগ করুন</h2><form id="contentForm">
 <input id="contentId" type="hidden"><div class="field"><label>কনটেন্টের ধরন</label><select id="contentType"><option value="quran">কোরআন</option><option value="hadith">হাদিস</option></select></div>
 <div class="field"><label>উৎস / গ্রন্থ</label><select id="source"><option value="Quran">আল-কোরআন</option><option value="Sahih al-Bukhari">সহিহ বুখারি</option><option value="Sahih Muslim">সহিহ মুসলিম</option><option value="Jami at-Tirmidhi">জামে আত-তিরমিজি</option></select></div>
@@ -53,7 +73,7 @@ $("loginTab").onclick=()=>{ $("loginTab").className="active";$("signupTab").clas
 $("signupTab").onclick=()=>{ $("signupTab").className="active";$("loginTab").className="secondary";$("authBtn").textContent="প্রথম অ্যাডমিন অ্যাকাউন্ট তৈরি";$("authBtn").dataset.mode="signup";$("password").autocomplete="new-password";hide("authMsg")};
 $("authBtn").dataset.mode="login";
 $("authBtn").onclick=async()=>{const email=$("email").value,password=$("password").value;if(password.length<8){message("authMsg","কমপক্ষে ৮ অক্ষরের পাসওয়ার্ড দিন।",true);return}const btn=$("authBtn");btn.disabled=true;try{if(btn.dataset.mode==="signup"){const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+"/admin.html"}});if(error)throw error;if(data.session){session=data.session;await bootstrap();await loadDashboard()}else message("authMsg","অ্যাকাউন্টের নিশ্চিতকরণ লিংক ইমেইলে পাঠানো হয়েছে। ইমেইল যাচাই করে লগইন করুন।")}else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;session=data.session;await bootstrap();await loadDashboard()}}catch(e){message("authMsg",e.message||"লগইন ব্যর্থ হয়েছে।",true)}finally{btn.disabled=false}};
-async function loadDashboard(){const data=await callApi();staffRole=data.role;dashboardData=data; $("auth").classList.add("hide");$("dashboard").classList.remove("hide");$("who").textContent=(data.user.email||"")+" · "+(staffRole==="admin"?"অ্যাডমিন":"মডারেটর");$("settingsCard").classList.toggle("hide",staffRole!=="admin");$("inviteCard").classList.toggle("hide",staffRole!=="admin");$("mode").value=data.settings.publishing_mode;$("automation").checked=data.settings.automation_enabled;renderDashboard(data.dashboard, data.staged||[], data.hadith_staged||[], data.hadith_import_status||[])}
+async function loadDashboard(){const data=await callApi();staffRole=data.role;dashboardData=data; $("auth").classList.add("hide");$("dashboard").classList.remove("hide");$("who").textContent=(data.user.email||"")+" · "+(staffRole==="admin"?"অ্যাডমিন":"মডারেটর");$("settingsCard").classList.toggle("hide",staffRole!=="admin");$("inviteCard").classList.toggle("hide",staffRole!=="admin");$("mode").value=data.settings.publishing_mode;$("automation").checked=data.settings.automation_enabled;renderDashboard(data.dashboard, data.staged||[], data.hadith_staged||[], data.hadith_import_status||[]);await pcLoadList()}
 function renderDashboard(d,staged=[],hadithStaged=[],hadithStatus=[]){const c=d.counts||{};$("metrics").innerHTML=[["খসড়া",c.draft],["অনুমোদনের অপেক্ষায়",c.pending_approval],["অনুমোদিত",c.approved],["নির্ধারিত",c.scheduled],["প্রকাশিত",c.published],["ব্যর্থ",c.failed]].map(x=>'<div class="card"><div class="muted">'+x[0]+'</div><div class="metric">'+(x[1]||0)+'</div></div>').join("");renderQueue(d.items||[]);renderSchedule(d.slots||[]);renderStaged(staged);renderHadithStaged(hadithStaged);renderHadithStatus(hadithStatus);$("logs").innerHTML=(d.recent_logs||[]).length?(d.recent_logs||[]).map(l=>'<div class="item"><b>'+esc(l.slot_id)+'</b> · '+esc(l.status)+' · '+esc(l.reference||"")+'<div class="muted">'+new Date(l.created_at).toLocaleString("bn-BD")+(l.error?" · "+esc(l.error):"")+'</div></div>').join(""):"এখনো কোনো প্রকাশনা লগ নেই।"}
 
 function renderSchedule(slots){
@@ -94,6 +114,55 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function renderQueue(items){$("queue").innerHTML=items.length?items.map(q=>'<article class="item"><div class="row"><b>'+esc(q.source_name)+' · '+q.sequence_no+'</b><span class="pill">'+esc(q.status)+'</span></div><div class="arabic">'+esc(q.arabic_text)+'</div><p>'+esc(q.bengali_translation)+'</p><div class="muted">'+esc(q.reference_text)+'</div><div class="actions"><button class="secondary" onclick="editItem(\''+q.id+'\')">সম্পাদনা</button><button onclick="reviewItem(\''+q.id+'\',\'approve\')">অনুমোদন</button><button class="danger" onclick="reviewItem(\''+q.id+'\',\'reject\')">বাতিল</button></div></article>').join(""):"<p class='muted'>কিউতে এখনো কোনো কনটেন্ট নেই। যাচাইকৃত কনটেন্ট যোগ করুন।</p>"}
 window.editItem=id=>{const q=(dashboardData.dashboard.items||[]).find(x=>x.id===id);if(!q)return;$("contentId").value=q.id;$("contentType").value=q.content_type;$("source").value=q.source_name;$("sequence").value=q.sequence_no;$("arabic").value=q.arabic_text;$("translation").value=q.bengali_translation;$("commentary").value=q.commentary||"";$("tafhim").value=q.tafhimul_quran||"";$("ibnKathir").value=q.tafsir_ibn_kathir||"";$("explanationOne").value=q.explanation_one||"";$("explanationTwo").value=q.explanation_two||"";$("sourceLinks").value=(q.source_links||[]).join("\n");$("translationSource").value=q.translation_source||"";$("arabicSource").value=q.arabic_source||"";$("reference").value=q.reference_text;$("cardText").value=q.card_text||"";$("formTitle").textContent="কনটেন্ট সম্পাদনা";window.scrollTo({top:0,behavior:"smooth"})};
 window.reviewItem=async(id,action)=>{if(!confirm(action==="approve"?"এই কনটেন্ট অনুমোদন করবেন?":"এই কনটেন্ট বাতিল করবেন?"))return;try{await callApi({action:"queue_"+action,payload:{id}});await refresh()}catch(e){alert(e.message)}};
+
+const CARD_API=SUPABASE_URL+"/functions/v1/dawah-card-api";
+let pcContent=null,pcImage=null,pcCard=null;
+async function cardApi(body){
+ const res=await fetch(CARD_API,{method:"POST",headers:{Authorization:"Bearer "+session.access_token,apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok)throw new Error(data.error||"ফটোকার্ড API অনুরোধ ব্যর্থ");
+ return data;
+}
+function pcMessage(t,err=false){message("pcMsg",t,err)}
+function pcWrap(ctx,text,maxWidth){
+ const words=String(text||"").split(/\s+/);let lines=[],line="";
+ for(const word of words){const test=line?line+" "+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}
+ if(line)lines.push(line);return lines;
+}
+async function pcDraw(content,imageUrl){
+ await document.fonts.load('700 52px "Noto Sans Bengali"');
+ const canvas=$("pcCanvas"),ctx=canvas.getContext("2d");
+ const img=new Image();img.crossOrigin="anonymous";img.src=imageUrl;
+ await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error("ব্যাকগ্রাউন্ড ছবি লোড হয়নি"))});
+ ctx.clearRect(0,0,1080,1080);ctx.drawImage(img,0,0,1080,1080);
+ const grad=ctx.createLinearGradient(0,0,0,1080);grad.addColorStop(0,"rgba(7,35,28,.68)");grad.addColorStop(.5,"rgba(7,35,28,.58)");grad.addColorStop(1,"rgba(7,35,28,.82)");ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1080);
+ ctx.strokeStyle="rgba(245,224,173,.82)";ctx.lineWidth=3;ctx.strokeRect(38,38,1004,1004);
+ ctx.textAlign="center";ctx.textBaseline="middle";
+ ctx.fillStyle="#f1d99e";ctx.font='700 30px "Noto Sans Bengali"';ctx.fillText(content.content_type==="quran"?"আল-কোরআন":"হাদিস",540,150);
+ const text=String(content.bengali_translation||"").trim();
+ let font=58,lines=[];
+ for(;font>=30;font-=2){ctx.font='700 '+font+'px "Noto Sans Bengali"';lines=pcWrap(ctx,text,850);if(lines.length<=10&&lines.length*font*1.62<=650)break}
+ const lineH=font*1.62,total=lines.length*lineH;let y=510-total/2+lineH/2;
+ ctx.fillStyle="#fffdf6";ctx.font='700 '+font+'px "Noto Sans Bengali"';
+ for(const line of lines){ctx.fillText(line,540,y,870);y+=lineH}
+ ctx.fillStyle="#f1d99e";ctx.font='600 30px "Noto Sans Bengali"';ctx.fillText(String(content.reference_text||""),540,895,900);
+ ctx.fillStyle="rgba(255,253,246,.9)";ctx.font='500 23px "Noto Sans Bengali"';ctx.fillText("DAWAH.COM",540,970);
+}
+async function pcBlob(type,quality){return await new Promise((resolve,reject)=>$("pcCanvas").toBlob(b=>b?resolve(b):reject(new Error("কার্ড ফাইল তৈরি হয়নি")),type,quality))}
+async function pcUpload(blob,ext){
+ const signed=await cardApi({action:"upload_url",kind:"card",content_id:pcContent.id,ext});
+ const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,blob,{contentType:ext==="png"?"image/png":"image/jpeg",upsert:false});
+ if(error)throw error;return signed.path;
+}
+async function pcLoadList(){
+ try{const r=await cardApi({action:"card_list"});$("pcList").innerHTML=(r.cards||[]).length?(r.cards||[]).map(c=>'<article class="item"><b>'+esc(c.reference_text||"ফটোকার্ড")+'</b> · '+esc(c.status)+'<div class="muted">'+esc(c.updated_at||"")+'</div>'+(c.png_url?'<a href="'+esc(c.png_url)+'" target="_blank" rel="noopener">কার্ড দেখুন</a>':"")+'</article>').join(""):"এখনো কোনো ফটোকার্ড তৈরি হয়নি।"}catch(e){$("pcList").textContent=e.message}
+}
+$("pcSearch").onclick=async()=>{const btn=$("pcSearch");btn.disabled=true;try{const r=await cardApi({action:"content_search",source_name:$("pcSource").value,query:$("pcQuery").value});const items=r.items||[];$("pcResults").innerHTML=items.length?items.map(x=>'<article class="item"><b>'+esc(x.reference_text)+'</b><p>'+esc(x.translation_preview)+'</p><div class="muted">'+esc(x.source_name)+' · '+esc(x.status)+' · '+esc(x.card_count)+'টি কার্ড</div><button type="button" onclick="pcChoose(\''+x.id+'\')">এই কনটেন্ট নির্বাচন</button></article>').join(""):"কোনো কনটেন্ট পাওয়া যায়নি।"}catch(e){$("pcResults").textContent=e.message}finally{btn.disabled=false}};
+window.pcChoose=async id=>{try{const r=await cardApi({action:"content_get",id});pcContent=r.content;$("pcRef").textContent=pcContent.reference_text;$("pcTranslation").textContent=pcContent.bengali_translation;$("pcEditor").classList.remove("hide");$("pcSave").disabled=true;$("pcApprove").disabled=true;$("pcMsg").classList.add("hide");$("pcCanvas").getContext("2d").clearRect(0,0,1080,1080)}catch(e){pcMessage(e.message,true)}};
+$("pcGenerate").onclick=async()=>{const btn=$("pcGenerate");btn.disabled=true;pcMessage("AI ব্যাকগ্রাউন্ড তৈরি হচ্ছে…");try{const r=await cardApi({action:"ai_generate",content_id:pcContent.id});pcImage=r.image;await pcDraw(pcContent,pcImage.url);$("pcSave").disabled=false;pcMessage("কার্ডের খসড়া তৈরি হয়েছে। সংরক্ষণের আগে অনুবাদ ও রেফারেন্স দেখে নিন।")}catch(e){pcMessage(e.message,true)}finally{btn.disabled=false}};
+$("pcSave").onclick=async()=>{const btn=$("pcSave");btn.disabled=true;try{pcMessage("PNG ও JPG ফাইল সংরক্ষণ হচ্ছে…");const png=await pcBlob("image/png"),jpg=await pcBlob("image/jpeg",.92);const pngPath=await pcUpload(png,"png"),jpgPath=await pcUpload(jpg,"jpg");const r=await cardApi({action:"card_save",payload:{content_id:pcContent.id,status:"ready_for_review",template:"ivory",size_key:"square",image_id:pcImage.id,png_path:pngPath,jpg_path:jpgPath,layout:{width:1080,height:1080,translation_primary:true,reference:pcContent.reference_text}}});pcCard=r.card;$("pcApprove").disabled=false;pcMessage("ফটোকার্ড পর্যালোচনার জন্য সংরক্ষিত হয়েছে। অনুমোদনের পরই এটি প্রকাশের উপযোগী হবে।");await pcLoadList()}catch(e){pcMessage(e.message,true);btn.disabled=false}};
+$("pcApprove").onclick=async()=>{if(!pcCard?.id)return;const btn=$("pcApprove");btn.disabled=true;try{await cardApi({action:"card_status",id:pcCard.id,status:"approved"});pcMessage("ফটোকার্ড অনুমোদিত হয়েছে। প্রকাশকের সঙ্গে স্বয়ংক্রিয় সংযোগের কাজ এখনো বাকি।");await pcLoadList()}catch(e){pcMessage(e.message,true);btn.disabled=false}};
+
 async function refresh(){const data=await callApi();dashboardData=data;renderDashboard(data.dashboard,data.staged||[],data.hadith_staged||[],data.hadith_import_status||[])}
 $("contentType").onchange=()=>{const hadith=$("contentType").value==="hadith";$("source").value=hadith?"Sahih al-Bukhari":"Quran"};
 $("contentForm").onsubmit=async e=>{e.preventDefault();const payload={content_type:$("contentType").value,source_name:$("source").value,sequence_no:Number($("sequence").value),arabic_text:$("arabic").value,bengali_translation:$("translation").value,commentary:$("commentary").value,tafhimul_quran:$("tafhim").value,tafsir_ibn_kathir:$("ibnKathir").value,explanation_one:$("explanationOne").value,explanation_two:$("explanationTwo").value,source_links:$("sourceLinks").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),translation_source:$("translationSource").value,arabic_source:$("arabicSource").value,reference_text:$("reference").value,card_text:$("cardText").value};const id=$("contentId").value;if(id)payload.id=id;try{await callApi({action:id?"queue_update":"queue_create",payload});$("contentForm").reset();$("contentId").value="";$("formTitle").textContent="নতুন কনটেন্ট যোগ করুন";await refresh();message("notice","কনটেন্ট সংরক্ষণ হয়েছে।")}catch(e){message("notice",e.message,true)}};
@@ -103,4 +172,6 @@ $("saveSettings").onclick=async()=>{try{await callApi({action:"update_settings",
 $("inviteBtn").onclick=async()=>{try{await callApi({action:"invite_moderator",email:$("inviteEmail").value});message("notice","মডারেটর আমন্ত্রণ পাঠানো হয়েছে।");$("inviteEmail").value=""}catch(e){message("notice",e.message,true)}};
 $("logout").onclick=async()=>{await sb.auth.signOut();session=null;$("dashboard").classList.add("hide");$("auth").classList.remove("hide")};
 sb.auth.getSession().then(async({data})=>{if(data.session){session=data.session;try{await loadDashboard()}catch(e){message("authMsg",e.message,true);$("auth").classList.remove("hide")}}});
-</script><script src="assets/photocard.js" defer></script></body></html>
+</script>
+<script src="/assets/photocard.js"></script>
+</body></html>
