@@ -93,3 +93,8 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Database migration: `20261123222832_dawah_admin_content_sources_fields` (applied and verified).
 - This closes a data-entry gap: the previous form only saved the generic commentary field and silently omitted the dedicated tafsir/source fields needed by the planned comment workflow.
 - No production content was inserted. Queue count remains zero, and automation remains disabled.
+
+## Photo card image for Facebook posts — prepared, NOT enabled
+- `dawah-card-for-post` (Edge Function, read-only): POST `{"queue_id":"<uuid>"}` with header `x-dawah-worker-secret` → `{has_card:false}` or `{has_card:true, image_url, card_id, size_key, expires_in}` for the newest **approved** card whose source record is unchanged since export.
+- Suggested Make change (not applied): after `claim`, call this endpoint; if `has_card`, use "Create a Photo Post" with `image_url` and the existing caption, else keep the current text post. Record IDs through the existing `record_post` / `record_comment` / `confirm` calls unchanged, so already-recorded posts/comments are never republished.
+- Nothing in this repository posts to Facebook. Enabling it requires the owner's explicit approval and a controlled test post.
