@@ -102,7 +102,7 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 
 
 ## Comment retry recovery — 2026-11-24
-- Applied migration `20261124161230_recover_comment_jobs_with_recorded_external_id`.
+- Applied migration `20261124161108_recover_comment_jobs_with_recorded_external_id`.
 - If a comment job is reclaimed after its Facebook comment ID was already persisted, the claim RPC now marks it posted and returns `already_posted`; the Make dispatcher only creates a comment for `status=claimed`, so it will not publish that same comment again.
 - The function remains SECURITY DEFINER with an empty search_path and an explicit service_role check. Verification confirmed all 8 existing comment jobs are posted and have a Facebook comment ID.
 - This closes the retry window after the external comment ID has been saved. A failure between Facebook accepting a comment and the subsequent ID-persistence request still requires reconciliation; no client-side idempotency key is available from Facebook Pages CreateComment.
@@ -111,4 +111,4 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 ## Quran reference normalization — 2026-11-24
 - Normalized 3,788 Quran queue references to Bengali surah names and ayah numbers using QuranEnc's official Bengali surah-name endpoint (`sowar_names?iso_code=bn`, all 114 names).
 - Arabic Quran text and Bengali translation were not changed by this update; only the reference label was normalized.
-- Applied migration `20261124161530_normalize_quran_surah_references` so the change is version-controlled and reproducible.
+- Applied migration `20261124161254_normalize_quran_surah_references` so the change is version-controlled and reproducible.
