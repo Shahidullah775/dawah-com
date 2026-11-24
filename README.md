@@ -72,4 +72,4 @@ Admin → **AI ফটো কার্ড স্টুডিও** creates Quran/H
 - **Website:** after approval, "ওয়েবসাইটে প্রকাশ" lists the card on `/cards.html` via the read-only `dawah-public-cards` function. Editing, un-approving or changing the source record removes it automatically.
 - **Facebook:** the Make Scheduled Publisher now has a guarded photocard route: after a queue claim it looks up an approved, source-current card; it uses `CreatePostWithPhotos` only when a signed image URL exists and releases the claim if no card exists. The scenario remains inactive; no live post has been made by this feature. Do not activate until an admin has created and approved a card and a controlled test is authorized. See FACEBOOK-AUTOMATION.md.
 
-Database: migrations `202611240006`, `…0007`, `…0008`, and `20261124160204`, `20261124160743` (private photo-card tables; service-role-only RPCs; source-staging client grants revoked; RLS remains enabled).
+Database: migrations `202611240006`, `…0007`, `…0008`, and `20261124160204`, `20261124160743`, `20261124161230` (private photo-card tables; service-role-only RPCs; source-staging client grants revoked; RLS remains enabled).
