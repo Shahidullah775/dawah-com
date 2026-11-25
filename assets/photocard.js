@@ -541,6 +541,25 @@
     try {
       var r = await api("content_get", { id: id });
       st.content = r.content; st.card = null; st.image = null; st.imgEl = null; st.dirty = false; st.design = defaultDesign();
+      // Long Quran verses use a dedicated Bengali-first single-card layout.
+      // Never shorten or split the verse: use the complete database translation.
+      var selected = st.content || {};
+      var selectedBn = String(selected.bengali_translation || "").trim();
+      var isLongQuran = selected.content_type !== "hadith" &&
+        /quran|কুরআন/i.test(String(selected.source_name || "")) &&
+        selectedBn.length > 130;
+      if (isLongQuran) {
+        st.design.tpl = "editorial";
+        st.design.showAr = false;
+        st.design.showBn = true;
+        st.design.bnSource = "translation";
+        st.design.autoFit = true;
+        st.size = "portrait";
+      } else {
+        st.design.showAr = true;
+        st.design.bnSource = "translation";
+        st.size = "square";
+      }
       renderContentBox(); syncControls(); msg("");
       await refreshCards(true); loadLibrary(); schedule();
     } catch (e) { msg("কনটেন্ট লোড ব্যর্থ: " + e.message, "err"); }
