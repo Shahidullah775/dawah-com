@@ -99,7 +99,17 @@
 
   /* ---------- text from the database row (never edited) ---------- */
   function C() { return st.content || {}; }
-  function arabicText() { return (C().arabic_text || "").trim(); }
+  function isLongQuranContent(c) {
+    c = c || {};
+    return c.content_type !== "hadith" &&
+      /quran|কুরআন/i.test(String(c.source_name || "")) &&
+      String(c.bengali_translation || "").trim().length > 130;
+  }
+  function arabicText() {
+    // Long Quran verse cards show the complete Bengali translation only.
+    if (isLongQuranContent(C())) return "";
+    return (C().arabic_text || "").trim();
+  }
   function bengaliText() {
     var c = C(); var v = st.design.bnSource === "card_text" ? c.card_text : c.bengali_translation;
     return (v || "").trim();
@@ -544,10 +554,7 @@
       // Long Quran verses use a dedicated Bengali-first single-card layout.
       // Never shorten or split the verse: use the complete database translation.
       var selected = st.content || {};
-      var selectedBn = String(selected.bengali_translation || "").trim();
-      var isLongQuran = selected.content_type !== "hadith" &&
-        /quran|কুরআন/i.test(String(selected.source_name || "")) &&
-        selectedBn.length > 130;
+      var isLongQuran = isLongQuranContent(selected);
       if (isLongQuran) {
         st.design.tpl = "editorial";
         st.design.showAr = false;
