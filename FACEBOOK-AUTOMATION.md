@@ -112,3 +112,30 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Normalized 3,788 Quran queue references to Bengali surah names and ayah numbers using QuranEnc's official Bengali surah-name endpoint (`sowar_names?iso_code=bn`, all 114 names).
 - Arabic Quran text and Bengali translation were not changed by this update; only the reference label was normalized.
 - Applied migration `20261124161254_normalize_quran_surah_references` so the change is version-controlled and reproducible.
+
+
+## Owner-approved Quran card, caption and comment format — 2026-11-25
+This section supersedes the earlier Quran publishing specification above wherever they conflict.
+
+### One verse, one photocard
+- Publish exactly one photocard per selected Quran queue item. Never split one ayah across multiple cards.
+- The photocard must contain the complete Bengali translation of the selected ayah, sourced unchanged from the verified database record. Never truncate, paraphrase, or display only a fragment.
+- Short ayah: use the complete Bengali translation and, when it fits cleanly, the complete Arabic ayah as well.
+- Long ayah: use a dedicated Bengali-first layout with more room (portrait 4:5 preferred); omit Arabic from the image. Keep the complete Bengali translation readable. If it cannot fit at a legible size, block export for redesign rather than clipping or splitting it.
+- The card must not use an AI-generated rendering of Quran text. AI may create only text-free backgrounds.
+
+### Facebook caption
+- Arabic Quran text does not go in the main caption.
+- For a normal/short selected ayah, the caption includes the Bengali translation and reference for the selected ayah plus the immediately preceding and following ayahs (three consecutive ayahs total), each clearly identified by its own reference.
+- For a long selected ayah, the caption includes the complete Bengali translation and reference of the selected ayah only. Do not add neighbouring ayahs if that would make the caption unwieldy.
+- Never cut an ayah mid-sentence or present a fragment as the complete ayah.
+
+### Facebook comments
+- Put the verified Arabic original text in a Facebook comment, not in the caption. For a selected ayah, include its Arabic text and, where available and verified, the Arabic text of the preceding and following ayahs as context.
+- Keep the required Bengali tafsir/source notes and the two separately linked reliable tafsir references in comments, using the source-specific fields and verified URLs. Do not fabricate or misattribute commentary.
+- Preserve separate comment jobs and record each actual Facebook comment ID before confirming publication. The post sequence must not advance until all required comments succeed.
+- Copyright and source-verification rules above remain in force. If neighbouring ayah text or its source cannot be verified, omit it rather than guess.
+
+### Implementation gate
+- The card studio now selects a Bengali-first 4:5 editorial layout and suppresses Arabic on Quran records whose Bengali translation exceeds 130 characters. This is a starting heuristic; human review must confirm legibility and the complete text before approval.
+- The caption/comment composition and Make publishing mappings still require implementation and end-to-end verification. Keep live automation disabled until those changes are verified.
