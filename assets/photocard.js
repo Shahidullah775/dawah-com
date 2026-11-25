@@ -557,13 +557,11 @@
       var isLongQuran = isLongQuranContent(selected);
       if (isLongQuran) {
         st.design.tpl = "editorial";
-        st.design.showAr = false;
         st.design.showBn = true;
         st.design.bnSource = "translation";
         st.design.autoFit = true;
         st.size = "portrait";
       } else {
-        st.design.showAr = true;
         st.design.bnSource = "translation";
         st.size = "square";
       }
