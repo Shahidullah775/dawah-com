@@ -1,0 +1,19 @@
+name: Auto photo cards
+on:
+  schedule: [{ cron: "17 * * * *" }]
+  workflow_dispatch: {}
+permissions: { contents: read }
+concurrency: { group: auto-cards, cancel-in-progress: false }
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-save playwright@1.49.1 && npx playwright install --with-deps chromium
+      - run: node tools/render-cards.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          DAWAH_CARD_AUTO_SECRET: ${{ secrets.DAWAH_CARD_AUTO_SECRET }}

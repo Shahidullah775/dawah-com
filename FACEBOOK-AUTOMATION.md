@@ -112,3 +112,12 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Normalized 3,788 Quran queue references to Bengali surah names and ayah numbers using QuranEnc's official Bengali surah-name endpoint (`sowar_names?iso_code=bn`, all 114 names).
 - Arabic Quran text and Bengali translation were not changed by this update; only the reference label was normalized.
 - Applied migration `20261124161254_normalize_quran_surah_references` so the change is version-controlled and reproducible.
+
+## Automatic Bengali-only photo cards — 2026-11-26
+- Policy: the card shows **Bengali only** (ayah + surah/ayah reference). Arabic is never drawn; the full Bengali ayah goes in the caption and the Arabic text + links go in a comment.
+- `tools/render-cards.mjs` (run by `.github/workflows/auto-cards.yml`, hourly) renders cards in Chromium with Hind Siliguri and commits them through the narrow `dawah-card-auto` Edge Function (secret `DAWAH_CARD_AUTO_SECRET`; it can only list pending items, mint a card upload URL and commit a card).
+- Display-only cleanup: footnote markers like `[১]` and a leading verse number are removed from the *rendered image*; the database is not modified.
+- Auto-approval gate (all must pass or nothing is committed): non-empty text and reference, no leftover markers, no Arabic characters, Bengali font actually loaded, text fits at >= 34px with no truncation. The commit RPC also refuses if the source changed since rendering.
+- Quran items only; hadith stay excluded until rights are reviewed. At most 3 cards per run.
+- Migration `202611260001_dawah_auto_cards.sql` (service_role only). DB-level rollback test: stale hash, failed gate and foreign paths are refused; a valid commit is found by `dawah_worker_card_for_queue`.
+- NOT yet tested for real: the renderer in GitHub Actions (needs the two repo secrets and a merge to main for the schedule), and no card or Facebook post has been created.
