@@ -113,6 +113,14 @@ Every request is POST JSON and must include `x-dawah-worker-secret`.
 - Arabic Quran text and Bengali translation were not changed by this update; only the reference label was normalized.
 - Applied migration `20261124161254_normalize_quran_surah_references` so the change is version-controlled and reproducible.
 
+## Automatic Bengali-only photo cards — 2026-11-26
+- Policy: the card shows **Bengali only** (ayah + surah/ayah reference). Arabic is never drawn; the full Bengali ayah goes in the caption and the Arabic text + links go in a comment.
+- `tools/render-cards.mjs` (run by `.github/workflows/auto-cards.yml`, hourly) renders cards in Chromium with Hind Siliguri and commits them through the narrow `dawah-card-auto` Edge Function (secret `DAWAH_CARD_AUTO_SECRET`; it can only list pending items, mint a card upload URL and commit a card).
+- Display-only cleanup: footnote markers like `[১]` and a leading verse number are removed from the *rendered image*; the database is not modified.
+- Auto-approval gate (all must pass or nothing is committed): non-empty text and reference, no leftover markers, no Arabic characters, Bengali font actually loaded, text fits at >= 34px with no truncation. The commit RPC also refuses if the source changed since rendering.
+- Quran items only; hadith stay excluded until rights are reviewed. At most 3 cards per run.
+- Migration `202611260001_dawah_auto_cards.sql` (service_role only). DB-level rollback test: stale hash, failed gate and foreign paths are refused; a valid commit is found by `dawah_worker_card_for_queue`.
+- NOT yet tested for real: the renderer in GitHub Actions (needs the two repo secrets and a merge to main for the schedule), and no card or Facebook post has been created.
 
 ## Owner-approved Quran card, caption and comment format — 2026-11-25
 This section supersedes the earlier Quran publishing specification above wherever they conflict.
@@ -139,3 +147,9 @@ This section supersedes the earlier Quran publishing specification above whereve
 ### Implementation gate
 - The card studio now selects a Bengali-first 4:5 editorial layout and suppresses Arabic on Quran records whose Bengali translation exceeds 130 characters. This is a starting heuristic; human review must confirm legibility and the complete text before approval.
 - The caption/comment composition and Make publishing mappings still require implementation and end-to-end verification. Keep live automation disabled until those changes are verified.
+
+### Owner instruction of 2026-11-26 (newer; overrides the 2026-11-25 card/caption rules where they differ)
+- Photocard: **Bengali only** for every ayah, never Arabic. Caption: the complete Bengali ayah of the selected verse only (no neighbouring ayahs). Comment: the Arabic original plus links.
+- Implemented 2026-11-28: caption = cleaned complete Bengali ayah + reference (built in `dawah-card-for-post`, Make module 22 now uses `{{21.data.caption}}`; footnote markers like [১] removed, DB unchanged). Quran comment #1 = Arabic original + quran.com ayah link + translation-source link (migration 202611280002; falls back to the old text if Arabic is empty). Comments 2-4 unchanged. The 2026-11-25 'three-ayah caption' rule is not applied.
+- Auto-approved cards are attributed to the sole admin with `auto=true` (layout + activity log) so they pass `dawah_validate_card` (migration 202611280003).
+- Still NOT verified end-to-end with a real render or a real Facebook post. Automation stays disabled.
