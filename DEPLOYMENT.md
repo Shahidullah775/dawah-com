@@ -61,3 +61,11 @@ Never commit Supabase service-role keys, Facebook access tokens, passwords, or o
 4. Storage buckets `dawah-card-images` and `dawah-cards` are private; the browser only receives short-lived signed URLs.
 5. Merge the `feature/photocard-studio-rebased` PR to `main` to publish `admin.html`, `assets/photocard.js`, `cards.html` and nav links. Verify with a real admin login (create, save, approve, publish to website) before relying on it.
 6. Do not add the card image to the Facebook scenario until the owner explicitly approves.
+
+## Automatic Bengali-only photo cards (GitHub Actions)
+1. Supabase: set Edge Function secret `DAWAH_CARD_AUTO_SECRET` (random, 40+ chars) and deploy `dawah-card-auto` (verify_jwt=false).
+2. GitHub → Settings → Secrets → Actions: add `DAWAH_CARD_AUTO_SECRET` (same value) and `SUPABASE_URL`. Never add the service_role key to GitHub.
+3. After merging to `main`, `.github/workflows/auto-cards.yml` runs hourly (or run it manually via workflow_dispatch). It renders at most 3 cards per run for approved Quran queue items without a valid card.
+4. Verify: `select status, layout->>'auto' from private.dawah_photocards;` then check the card image before enabling `automation_enabled`.
+5. Rotate the secret by changing it in both places; the endpoint can only list pending items, upload a card file and commit a card.
+Hadith items are excluded until their rights are reviewed.
