@@ -150,4 +150,6 @@ This section supersedes the earlier Quran publishing specification above whereve
 
 ### Owner instruction of 2026-11-26 (newer; overrides the 2026-11-25 card/caption rules where they differ)
 - Photocard: **Bengali only** for every ayah, never Arabic. Caption: the complete Bengali ayah of the selected verse only (no neighbouring ayahs). Comment: the Arabic original plus links.
-- The Make caption/comment mappings have NOT yet been changed to this; automation stays disabled until they are implemented and verified.
+- Implemented 2026-11-28: caption = cleaned complete Bengali ayah + reference (built in `dawah-card-for-post`, Make module 22 now uses `{{21.data.caption}}`; footnote markers like [১] removed, DB unchanged). Quran comment #1 = Arabic original + quran.com ayah link + translation-source link (migration 202611280002; falls back to the old text if Arabic is empty). Comments 2-4 unchanged. The 2026-11-25 'three-ayah caption' rule is not applied.
+- Auto-approved cards are attributed to the sole admin with `auto=true` (layout + activity log) so they pass `dawah_validate_card` (migration 202611280003).
+- Still NOT verified end-to-end with a real render or a real Facebook post. Automation stays disabled.
