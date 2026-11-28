@@ -99,7 +99,17 @@
 
   /* ---------- text from the database row (never edited) ---------- */
   function C() { return st.content || {}; }
-  function arabicText() { return (C().arabic_text || "").trim(); }
+  function isLongQuranContent(c) {
+    c = c || {};
+    return c.content_type !== "hadith" &&
+      /quran|কুরআন/i.test(String(c.source_name || "")) &&
+      String(c.bengali_translation || "").trim().length > 130;
+  }
+  function arabicText() {
+    // Long Quran verse cards show the complete Bengali translation only.
+    if (isLongQuranContent(C())) return "";
+    return (C().arabic_text || "").trim();
+  }
   function bengaliText() {
     var c = C(); var v = st.design.bnSource === "card_text" ? c.card_text : c.bengali_translation;
     return (v || "").trim();
@@ -541,6 +551,20 @@
     try {
       var r = await api("content_get", { id: id });
       st.content = r.content; st.card = null; st.image = null; st.imgEl = null; st.dirty = false; st.design = defaultDesign();
+      // Long Quran verses use a dedicated Bengali-first single-card layout.
+      // Never shorten or split the verse: use the complete database translation.
+      var selected = st.content || {};
+      var isLongQuran = isLongQuranContent(selected);
+      if (isLongQuran) {
+        st.design.tpl = "editorial";
+        st.design.showBn = true;
+        st.design.bnSource = "translation";
+        st.design.autoFit = true;
+        st.size = "portrait";
+      } else {
+        st.design.bnSource = "translation";
+        st.size = "square";
+      }
       renderContentBox(); syncControls(); msg("");
       await refreshCards(true); loadLibrary(); schedule();
     } catch (e) { msg("কনটেন্ট লোড ব্যর্থ: " + e.message, "err"); }
