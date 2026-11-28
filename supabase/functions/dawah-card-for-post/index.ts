@@ -14,6 +14,11 @@ function safeEqual(a: string, b: string) {
   return d === 0;
 }
 
+// Display-only cleanup (database untouched): drop footnote markers like [১] and a leading verse number.
+function cleanBengali(s: string) {
+  return s.replace(/\s*\[[০-৯0-9]+\]/g, "").replace(/^\s*[০-৯0-9]+[.।]\s+/, "").replace(/\s+/g, " ").trim();
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return out({ error: "method_not_allowed" }, 405);
   const expected = Deno.env.get("DAWAH_WORKER_SECRET") ?? "";
@@ -30,5 +35,6 @@ Deno.serve(async (req: Request) => {
   if (!data || !data.png_path) return out({ has_card: false });
   const { data: s } = await admin.storage.from("dawah-cards").createSignedUrl(data.png_path, 3600);
   if (!s?.signedUrl) return out({ has_card: false, error: "sign_failed" }, 502);
-  return out({ has_card: true, card_id: data.card_id, size_key: data.size_key, image_url: s.signedUrl, expires_in: 3600 });
+  const caption = data.bengali && data.reference ? `${cleanBengali(String(data.bengali))}\n\n${String(data.reference).trim()}` : "";
+  return out({ has_card: true, caption, card_id: data.card_id, size_key: data.size_key, image_url: s.signedUrl, expires_in: 3600 });
 });
